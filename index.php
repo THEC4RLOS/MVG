@@ -7,7 +7,7 @@ and open the template in the editor.
 <html>
     <head>
         <meta charset="UTF-8">
-        <title>Visor II</title>
+        <title>MVG</title>
         <link rel="stylesheet" type="text/css" href="./resources/bootstrap/css/bootstrap.min.css">
         <script src="./resources/angular/angular.js"></script>
         <script src="./js/app.js"></script>
