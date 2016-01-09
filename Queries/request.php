@@ -21,7 +21,8 @@ $type = $_GET['type']; //tipo de geometría de la tabla
 if ($name != NULL && $type != NULL) {
     $query = new query();
     $layer = $query->conect($host, $user, $pass, $port, $db, $type, $name);
-    echo $layer;
+    print_r( $layer);
+    return $layer[0];
 }
 //http://localhost/MVG/trunk/Queries/request.php?h=localhost&u=postgres&p=12345&port=532&db=cursoGIS&name&type
 else {

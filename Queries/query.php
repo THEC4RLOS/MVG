@@ -27,18 +27,7 @@ class query {
         $strconn = "host=$host port=$port dbname=$db user=$usr password=$pass";
         $conn = pg_connect($strconn) or die('{"status":1 , "error":"Error de Conexion con la base de datos"}');
 
-        //puntos
-        if ($type == "p") {
-            return queryForPoints($conn, $name);
-        }
-        //multilíneas
-        else if ($type == "l") {
-            return queryForLines($conn, $name);
-        }
-        //multipoligonos
-        else if ($type == "mp") {
-            return "solicitó multipoligonos";
-        }
+        return queryForPoints($conn, $name);
     }
 
 }
@@ -62,14 +51,7 @@ function queryForPoints($conn, $name) {
             "coordenada" => json_decode($row[0]));
         array_push($respuesta, $geom);
     }
-
-    $query = "select srid,type from geometry_Columns where \"f_table_name\"='$name'";
-
-    $result = pg_query($conn, $query) or die('{"status":1 , "error":"Error ern la consulta"}');
-    $row = pg_fetch_row($result);
-
-    return json_encode(array("SRID" => $row[0],
-        "objs" => $respuesta));
+    return $respuesta;
 }
 
 /**
@@ -81,10 +63,12 @@ function queryForPoints($conn, $name) {
  * tabla
  */
 function queryForLines($conn, $name) {
+    ini_set('memory_limit', '-1');
+    set_time_limit(300);
     $respuesta = array();
 
     //obtener las geometrías x,y
-    $query = "select num, st_asgeojson(geom) from (select st_numgeometries(geom) num, geom  from rios) c where num < 2 limit 5000";
+    $query = "select st_asGeoJSON(geom) from $name group by gid";
     $result = pg_query($conn, $query) or die('{"status":1 , "error":"Error ern la consulta"}');
 
     while ($row = pg_fetch_row($result)) {
@@ -95,11 +79,5 @@ function queryForLines($conn, $name) {
     }
 
 
-    $query = "select srid,type from geometry_Columns where \"f_table_name\"='$name'";
-
-    $result = pg_query($conn, $query) or die('{"status":1 , "error":"Error ern la consulta"}');
-    $row = pg_fetch_row($result);
-
-    return json_encode(array("SRID" => $row[0],
-        "objs" => $respuesta));
+    return $respuesta;
 }
