@@ -29,7 +29,7 @@ class query {
 
         return queryForPoints($conn, $name);
     }
-    
+
     /**
      * Funcion de retorna la informacion de las tablas
      * @param type $conn string de conexión
@@ -44,7 +44,7 @@ class query {
                 "nombre" => $row[0],
                 "srid" => $row[1],
                 "tipo" => $row[2]
-                    );
+            );
             array_push($respuesta, $geometryColumns);
         }
         return json_encode($respuesta);
@@ -73,4 +73,3 @@ function queryForPoints($conn, $name) {
     }
     return $respuesta;
 }
-
