@@ -84,13 +84,16 @@ function queryForLines($conn, $name) {
     $respuesta = array();
 
     //obtener las geometrías x,y
-    $query = "select st_asGeoJSON(geom) from $name";
+    $query = "select num, st_asgeojson(geom) from (select st_numgeometries(geom) num, geom  from rios) c where num < 2 limit 5000";
     $result = pg_query($conn, $query) or die('{"status":1 , "error":"Error ern la consulta"}');
+
     while ($row = pg_fetch_row($result)) {
         $geom = array(
-            "coordenada" => json_decode($row[0]));
+            "coordenada" => json_decode($row[1]));
         array_push($respuesta, $geom);
+
     }
+
 
     $query = "select srid,type from geometry_Columns where \"f_table_name\"='$name'";
 
@@ -100,4 +103,3 @@ function queryForLines($conn, $name) {
     return json_encode(array("SRID" => $row[0],
         "objs" => $respuesta));
 }
-
