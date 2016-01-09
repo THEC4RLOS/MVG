@@ -25,7 +25,7 @@ and open the template in the editor.
                 <!-- Brand and toggle get grouped for better mobile display -->
                 <div class="navbar-header">
 
-                    <a class="navbar-brand" href="#">Multi Visor Geografico</a>
+                    <a title="El mejor Visor Geografico" class="navbar-brand" href="#">Multi Visor Geografico</a>
                 </div>
 
                 <!-- Collect the nav links, forms, and other content for toggling -->
@@ -37,6 +37,11 @@ and open the template in the editor.
                                 <img style=" width: 18px; height: 18px" src="./img/db.png" />
                             </a>
                         </li>
+                        <li title="Capas">
+                            <a role="button">
+                                <img style=" width: 18px; height: 18px" src="./img/layer.png" />
+                            </a>
+                        </li>
                     </ul>
 
                     <ul class="nav navbar-nav navbar-right">
@@ -45,7 +50,9 @@ and open the template in the editor.
                 </div><!-- /.navbar-collapse -->
             </div><!-- /.container-fluid -->
         </nav>
-<modal lolo="modal1" modal-body="body" modal-footer="footer" modal-header="header" data-ng-click-right-button="myRightButton()"></modal>
+    <modal lolo="modal1" modal-body="body" modal-footer="footer" modal-header="header" data-ng-click-right-button="myRightButton()" host="host" port="port" db="db" user="user" pass="pass">
+
+    </modal>
     <!--div style="width: 100%; height: 100%">  background-image: url(img/db.png)
     <li class="active" style=""><a href="#"> <font color="#E7E7E7">|</font> <span class="sr-only">(current)</span></a></li>
         <div id="nav-bar"  class="navbar container" style="width: 12%; height: 100%; background: #1b6d85; ">
