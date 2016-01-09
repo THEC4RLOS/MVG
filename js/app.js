@@ -1,12 +1,20 @@
 //controlador del visor
-var myApp = angular.module('app', []);
+var myApp = angular.module('app', ['FBAngular']);
 
-myApp.controller('controller', function ($scope, $http) {
-    $scope.header = 'Put here your header';
-    $scope.body = 'Put here your body';
-    $scope.footer = 'Put here your footer';
+myApp.controller('controller', function ($scope, Fullscreen) {
+    $scope.header = 'Conexion a Base de Datos';
+    //$scope.body = 'Put here your body';
+    //$scope.footer = 'Put here your footer';
     $scope.myRightButton = function (bool) {
         alert('!!! first function call!');
+    };
+
+    $scope.goFullscreen = function () {
+
+        if (Fullscreen.isEnabled())
+            Fullscreen.cancel();
+        else
+            Fullscreen.all();
     };
 
 });

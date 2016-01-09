@@ -16,6 +16,7 @@ and open the template in the editor.
         <link rel="stylesheet" type="text/css" href="./resources/bootstrap/css/bootstrap.min.css">
         <script src="./resources/bootstrap/js/bootstrap.min.js"></script>
         <script src="./resources/angular/angular.js"></script>
+        <script src="./resources/angular/angular-fullscreen.js"></script>
         <script src="./js/app.js"></script>
     </head>
     <body ng-app="app" ng-controller="controller">
@@ -30,7 +31,7 @@ and open the template in the editor.
                 <!-- Collect the nav links, forms, and other content for toggling -->
                 <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                     <ul class="nav navbar-nav">
-                        <li class="active" style=""><a href="#"> <font color="#E7E7E7">|</font></a></li>
+                        <li class="active" style=""><a> <font color="#E7E7E7">|</font></a></li>
                         <li title="Acceso a Base de Batos">
                             <a role="button" href="#{{modal1}}" data-toggle="modal">
                                 <img style=" width: 18px; height: 18px" src="./img/db.png" />
@@ -39,7 +40,7 @@ and open the template in the editor.
                     </ul>
 
                     <ul class="nav navbar-nav navbar-right">
-                        <li><a title="Fullscreen" class="glyphicon glyphicon-fullscreen" href="#"></a></li>                        
+                        <li><a ng-click="goFullscreen()" title="Fullscreen" class="glyphicon glyphicon-fullscreen" href="#"></a></li>                        
                     </ul>
                 </div><!-- /.navbar-collapse -->
             </div><!-- /.container-fluid -->
@@ -56,5 +57,6 @@ and open the template in the editor.
     <button>open</button>
         </div>
     </div-->
+    <div Fullscreen></div >
 </body>
 </html>
