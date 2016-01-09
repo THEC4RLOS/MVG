@@ -29,6 +29,26 @@ class query {
 
         return queryForPoints($conn, $name);
     }
+    
+    /**
+     * Funcion de retorna la informacion de las tablas
+     * @param type $conn string de conexión
+     * @return type JSON con los valores de nombre de la tabla, srid y tipo de todas las tablas
+     */
+    function getGeometryColumns($conn) {
+        $respuesta = array();
+        $query = "select f_table_name,srid, type from geometry_Columns";
+        $result = pg_query($conn, $query) or die('{"status":1 , "error":"Error al obtener datos de las tablas (GeometryColumns)"}');
+        while ($row = pg_fetch_row($result)) {
+            $geometryColumns = array(
+                "nombre" => $row[0],
+                "srid" => $row[1],
+                "tipo" => $row[2]
+                    );
+            array_push($respuesta, $geometryColumns);
+        }
+        return json_encode($respuesta);
+    }
 
 }
 

@@ -1,0 +1,30 @@
+<div id="{{handler}}" class="modal fade">
+    <p>capas</p>
+    <div class="modal-dialog">
+        <div class="modal-content" style="width: 55%; margin-left: 20%">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal2" aria-hidden="true">&times;</button>
+                <center><h4 class="modal-title">{{header}}</h4></center>
+            </div>
+            <div class="modal-body">
+                <div class="panel panel-default">
+                    <!-- Default panel contents -->
+                    <div class="panel-heading">Panel heading</div>
+                    <div class="panel-body">
+                        <p></p>
+                    </div>
+
+                    <!-- Table -->
+                    <table class="table">                        
+                    </table>
+                </div>
+                <!--p class="text-warning">{{body}}</p-->
+            </div>
+            <div class="modal-footer">
+                <span class="text-left pull-left">{{footer}}</span>                
+                <button type="button" class="btn btn-default" data-dismiss="modal2">Close</button>
+                <button type="button" class="btn btn-primary" data-ng-click="callbackbuttonright(); $event.stopPropagation()">Connect</button>
+            </div>
+        </div>
+    </div>
+</div>
