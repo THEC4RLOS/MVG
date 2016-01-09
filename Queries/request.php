@@ -27,5 +27,6 @@ if ($name != NULL && $type != NULL) {
 else {
     $checker = new Checker();
     $conn = $checker->connect($host, $user, $pass, $port, $db);
+    echo $conn;
 }
 
