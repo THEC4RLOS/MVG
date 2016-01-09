@@ -22,7 +22,9 @@ if ($name != NULL && $type != NULL) {
     $query = new query();
     $layer = $query->conect($host, $user, $pass, $port, $db, $type, $name);
     echo $layer;
-} else {
+}
+//http://localhost/MVG/trunk/Queries/request.php?h=localhost&u=postgres&p=12345&port=532&db=cursoGIS&name&type
+else {
     $checker = new Checker();
     $conn = $checker->connect($host, $user, $pass, $port, $db);
 }
