@@ -54,30 +54,3 @@ function queryForPoints($conn, $name) {
     return $respuesta;
 }
 
-/**
- * Funcion que devuelve un JSON con el SRID y las coordenadas de los puntos
- * necesarios para dibujar las capas compuestas por puntos
- * @param type $conn string de conexión
- * @param type $name nombre de la tabla a consultar
- * @return type JSON con los valores de las coordenadas del geom y el SRID de la
- * tabla
- */
-function queryForLines($conn, $name) {
-    ini_set('memory_limit', '-1');
-    set_time_limit(300);
-    $respuesta = array();
-
-    //obtener las geometrías x,y
-    $query = "select st_asGeoJSON(geom) from $name group by gid";
-    $result = pg_query($conn, $query) or die('{"status":1 , "error":"Error ern la consulta"}');
-
-    while ($row = pg_fetch_row($result)) {
-        $geom = array(
-            "coordenada" => json_decode($row[1]));
-        array_push($respuesta, $geom);
-
-    }
-
-
-    return $respuesta;
-}
