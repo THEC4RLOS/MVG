@@ -29,7 +29,7 @@ and open the template in the editor.
                     <!-- Brand and toggle get grouped for better mobile display -->
                     <div class="navbar-header">
 
-                        <a title="El mejor Visor Geografico" class="navbar-brand" href="#">Multi Visor Geografico</a>
+                        <a title="El mejor Visor Geografico" class="navbar-brand" href="#"> Multi Visor Geografico </a>
                     </div>
 
                     <!-- Collect the nav links, forms, and other content for toggling -->
@@ -77,7 +77,7 @@ and open the template in the editor.
                                 </tr>                        
                             </thead>
                             <tbody >
-                                <tr ng-repeat="capa in geomColumns">
+                                <tr ng-repeat="capa in layers">
                                     <td style="width: 15% !important;">
                                         <span class="input-group-addon">
                                             <input type="checkbox" aria-label="" ng-model="capa.estado">

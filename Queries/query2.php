@@ -14,14 +14,16 @@ class query {
      */
     function getGeometryColumns($conn) {
         $respuesta = array();
-        $query = "select f_table_name, srid, type, 'false' estado from geometry_Columns where srid = 5367";
+        $query = "select f_table_name, srid, type, 'false' estado, '[]' puntos, 'false' llamada from geometry_Columns where srid = 5367";
         $result = pg_query($conn, $query) or die('{"status":1 , "error":"Error al obtener datos de las tablas (GeometryColumns)"}');
         while ($row = pg_fetch_row($result)) {
             $geometryColumns = array(
                 "nombre" => $row[0],
                 "srid" => $row[1],
                 "tipo" => $row[2],
-                "estado" => json_decode($row[3])
+                "estado" => json_decode($row[3]),
+                "puntos" => json_decode($row[4]),
+                "llamada" => json_decode($row[5])
             );
             array_push($respuesta, $geometryColumns);
         }
@@ -40,14 +42,36 @@ class query {
         $respuesta = array();
 
         //obtener las geometrías x,y
-        $query = "select st_asGeoJSON(geom) from $name";
+        $query = "select st_asGeoJSON(geom) from distritos";
         $result = pg_query($conn, $query) or die('{"status":1 , "error":"Error ern la consulta"}');
-        while ($row = pg_fetch_row($result)) {
-            $geom = array(
-                "coordenada" => json_decode($row[0]));
-            array_push($respuesta, $geom);
+        $row = pg_fetch_all($result);
+
+        foreach ($row as &$valor) { // puntos
+            //echo strrpos($valor['st_asgeojson'], 'coordinates', 0);
+
+            $d = substr($valor['st_asgeojson'], strrpos($valor['st_asgeojson'], 'coordinates', 0) + strlen('coordinates') + 2, -1);
+
+            //echo ($valor['st_asgeojson']);
+            $as = json_decode($d);
+            //print_r($as[0]);
+            foreach ($as[0] as &$valor2) { // lineas
+
+                foreach ($valor2 as &$valor3) { // poligonos
+                    print_r($valor3);
+                    echo '<br>';
+                    echo '<br>';
+                    echo '<br>';
+                    echo '<br>';
+                    echo '<br>';
+                }
+            }
         }
-        return $respuesta;
+        /* while ($row = pg_fetch_row($result)) {
+          $geom = array(
+          $row[0]);
+          array_push($respuesta, $geom);
+          } */
+        //print_r($row);
     }
 
     /**
