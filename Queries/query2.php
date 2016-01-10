@@ -14,17 +14,18 @@ class query {
      */
     function getGeometryColumns($conn) {
         $respuesta = array();
-        $query = "select f_table_name,srid, type from geometry_Columns";
+        $query = "select f_table_name, srid, type, 'false' estado from geometry_Columns where srid = 5367";
         $result = pg_query($conn, $query) or die('{"status":1 , "error":"Error al obtener datos de las tablas (GeometryColumns)"}');
         while ($row = pg_fetch_row($result)) {
             $geometryColumns = array(
                 "nombre" => $row[0],
                 "srid" => $row[1],
-                "tipo" => $row[2]
+                "tipo" => $row[2],
+                "estado" => json_decode($row[3])
             );
             array_push($respuesta, $geometryColumns);
         }
-        return json_encode($respuesta);
+        return $respuesta;
     }
 
     /**
