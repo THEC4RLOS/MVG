@@ -22,7 +22,7 @@ class query {
                 "srid" => $row[1],
                 "tipo" => $row[2],
                 "estado" => json_decode($row[3]),
-                "puntos" => json_decode($row[4]),
+                //"puntos" => json_decode($row[4]),
                 "llamada" => json_decode($row[5])
             );
             array_push($respuesta, $geometryColumns);
@@ -42,50 +42,35 @@ class query {
         $respuesta = array();
 
         //obtener las geometrías x,y
-        $query = "select st_asGeoJSON(geom) from distritos";
-        $result = pg_query($conn, $query) or die('{"status":1 , "error":"Error ern la consulta"}');
+        $query = "select st_asGeoJSON(geom) from $name limit 5";
+        $result = pg_query($conn, $query) or die('{"status":1 , "error":"Error al obtener los puntos (Points)"}');
         $row = pg_fetch_all($result);
 
-        foreach ($row as &$valor) { // puntos
-            //echo strrpos($valor['st_asgeojson'], 'coordinates', 0);
-
-            $d = substr($valor['st_asgeojson'], strrpos($valor['st_asgeojson'], 'coordinates', 0) + strlen('coordinates') + 2, -1);
-
-            //echo ($valor['st_asgeojson']);
-            $as = json_decode($d);
-            //print_r($as[0]);
-            foreach ($as[0] as &$valor2) { // lineas
-
-                foreach ($valor2 as &$valor3) { // poligonos
-                    print_r($valor3);
-                    echo '<br>';
-                    echo '<br>';
-                    echo '<br>';
-                    echo '<br>';
-                    echo '<br>';
+        foreach ($row as &$valor) { // puntos MultiPoint
+            //print_r($valor['st_asgeojson']);
+            $data = substr($valor['st_asgeojson'], strrpos($valor['st_asgeojson'], 'coordinates', 0) + strlen('coordinates') + 2, -1);
+            $lines = strrpos($valor['st_asgeojson'], 'MultiLineString', 0);
+            $polygon = strrpos($valor['st_asgeojson'], 'MultiPolygon', 0);
+            $jsonData = json_decode($data);
+            
+            if ($polygon == '' and $lines == '') {
+                array_push($respuesta, $jsonData[0]);
+                //print_r($as[0]);
+            } else {
+                foreach ($jsonData[0] as &$valor2) { // lineas MultiLineString
+                    if ($polygon == '') {
+                        array_push($respuesta, $valor2);
+                        //print_r($valor2);
+                    } else {
+                        foreach ($valor2 as &$valor3) { // poligonos MultiPolygon
+                            array_push($respuesta, $valor3);
+                            //print_r($valor3);
+                        }
+                    }
                 }
             }
         }
-        /* while ($row = pg_fetch_row($result)) {
-          $geom = array(
-          $row[0]);
-          array_push($respuesta, $geom);
-          } */
-        //print_r($row);
+        return $respuesta;
     }
-
-    /**
-     * 
-     * @param type $host
-     * @param type $usr
-     * @param type $pass
-     * @param type $port
-     * @param type $db
-     */
-    function connect($strconn) {
-        //conexión con la base de datos
-        $conn = pg_connect($strconn) or die('{"status":1 , "error":"Error de Conexion con la base de datos"}');
-        echo "ok"; // si la conexión es exitosa
-    }
-
+    
 }

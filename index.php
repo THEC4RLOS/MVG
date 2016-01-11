@@ -1,13 +1,11 @@
 <!DOCTYPE html>
 <!--
-To change this license header, choose License Headers in Project Properties.
-To change this template file, choose Tools | Templates
-and open the template in the editor.
+    Homero: Multi Visor Geografico
 -->
 <html>
-    <head>
+    <head> <!-- head -->
         <meta charset="UTF-8">
-        <title>MVG</title>
+        <title>Homero</title>
         <!--script data-require="jquery@1.9.0" data-semver="1.9.0" src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.9.0/jquery.js"></script>
         <link data-require="bootstrap@3.0.0" data-semver="3.0.0" rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" />
         <script data-require="bootstrap@3.0.0" data-semver="3.0.0" src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
@@ -18,7 +16,7 @@ and open the template in the editor.
         <script src="./resources/angular/angular.js"></script>
         <script src="./resources/angular/angular-fullscreen.js"></script>
         <script src="./js/app.js"></script>
-    </head>
+    </head> <!-- /.head -->
     <body ng-app="app" ng-controller="controller">
         
         <div Fullscreen></div>
@@ -28,21 +26,23 @@ and open the template in the editor.
                 <div class="container-fluid">
                     <!-- Brand and toggle get grouped for better mobile display -->
                     <div class="navbar-header">
-
-                        <a title="El mejor Visor Geografico" class="navbar-brand" href="#"> Multi Visor Geografico </a>
+                        <a title="Homero" class="navbar-brand" href="#Homero">
+                            <img style=" width: 18px; height: 18px" src="./img/donut.png">
+                        </a>
+                        <a title="El mejor Visor Geografico!" class="navbar-brand">Multi Visor Geografico</a>
                     </div>
 
                     <!-- Collect the nav links, forms, and other content for toggling -->
                     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                         <ul class="nav navbar-nav">
-                            <li class="active" style=""><a> <font color="#E7E7E7">|</font></a></li>
+                            <li class="active" style=""><a><font color="#E7E7E7">|</font></a></li>
                             <li title="Acceso a Base de Batos">
                                 <a role="button" href="#{{modal1}}" data-toggle="modal" data-target="{{handler}}">
                                     <img style=" width: 18px; height: 18px" src="./img/db.png" />
                                 </a>
                             </li>
                             <li title="Capas">
-                                <a role="button" data-toggle="modal" data-target=".popLayerModal" ng-click=" verMisEstudiantes(eval.idGrupo)">
+                                <a role="button" data-toggle="modal" data-target=".popLayerModal">
                                     <img style=" width: 18px; height: 18px" src="./img/layer.png" />
                                 </a>
                             </li>
@@ -55,9 +55,16 @@ and open the template in the editor.
                 </div><!-- /.container-fluid -->
             </nav>
         </div> <!-- /.Nav Bar -->
-        
-        <!-- Modal Configuracion de la Base de Datos -->
-        <modal lolo="modal1" modal-body="body" modal-footer="footer" modal-header="header" data-ng-click-right-button="myRightButton()" host="host" port="port" db="db" user="user" pass="pass"></modal>
+        <div class="pull-left" style="width: 15.5%; height: 110px; background-color: white"></div>
+        <div class="pull-right" style="width: 84.5%; height: 110px; background-color: white">
+        <ul class="nav nav-tabs">
+            <li role="presentation" class="active"><a href="#">CANVAS</a></li>
+            <li role="presentation"><a href="#">IMG</a></li>
+            <li role="presentation"><a href="#">SVG</a></li>            
+        </ul>
+        </div>
+        <modal lolo="modal1" modal-body="body" modal-footer="footer" modal-header="header" data-ng-click-right-button="myRightButton()" host="host" port="port" db="db" user="user" pass="pass"> <!-- Modal Configuracion de la Base de Datos -->
+        </modal><!-- /.Modal Configuracion de la Base de Datos -->
 
         <div  class="modal fade popLayerModal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true"> <!-- Modal Ver Capas -->
             <div class="modal-dialog modal-lg" >
