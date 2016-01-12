@@ -3,6 +3,7 @@ var myApp = angular.module('app', ['FBAngular']);
 
 myApp.controller('controller', function ($scope, Fullscreen, $http) {
 
+    
     $scope.header = 'Conexion a Base de Datos';
     $scope.footer = '';
     $scope.host = 'localhost';

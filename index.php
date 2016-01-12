@@ -127,7 +127,7 @@
                         <a href="#3" data-toggle="tab">SVG</a>
                     </li>
                 </ul>
-
+<img id="img1" src="{{url}}"style="background-color: gray;height: 640px; width: 640px;">
                 <div class="tab-content">
                     <div class="tab-pane active" id="1" style="background-color: #eee;height:{{sizeY}}px; width:{{sizeX}}px; position: relative;">
                         <div ng-repeat="capa in capas">
@@ -141,9 +141,10 @@
                                 </table>
                             </div>
                         </div>
+                        
                     </div>
-                    <div class="tab-pane" id="2">
-                        <h3>Div img</h3>
+                    <div class="tab-pane" id="2" >
+                        <h3>Div img</h3>                                                
                     </div>
                     <div class="tab-pane" id="3">
                         <h3>Div svg</h3>
