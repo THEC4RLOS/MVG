@@ -65,13 +65,13 @@
             
             <div id="exTab2" class="">	
                 <ul class="nav nav-tabs">
-                    <li class="active">
+                    <li class="active" title="Visualizacion en etiqueta CANVAS">
                         <a  href="#1" data-toggle="tab">CANVAS</a>
                     </li>
-                    <li>
+                    <li title="Visualizacion en etiqueta IMG">
                         <a href="#2" data-toggle="tab">IMG</a>
                     </li>
-                    <li>
+                    <li title="Visualizacion en etiqueta SVG">
                         <a href="#3" data-toggle="tab">SVG</a>
                     </li>
                 </ul>

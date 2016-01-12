@@ -22,7 +22,7 @@ class query {
                 "srid" => $row[1],
                 "tipo" => $row[2],
                 "estado" => json_decode($row[3]),
-                //"puntos" => json_decode($row[4]),
+                "puntos" => json_decode($row[4]),
                 "llamada" => json_decode($row[5])
             );
             array_push($respuesta, $geometryColumns);

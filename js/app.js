@@ -12,18 +12,13 @@ myApp.controller('controller', function ($scope, Fullscreen, $http) {
     $scope.pass = 12345;
     $scope.layers; // todas las caas disponibles
 
-
-    $('.nav-tabs a').click(function (e) {
-        e.preventDefault();
-        $($(e.target).text()).addClass("active");
-        $(this).tab('show');
-        console.log($(e.target).text());
-    });
-
     $scope.printGeometryColumns = function () {
         $scope.layers.forEach(function (layer) {
-            console.log('nombre:', layer.nombre, 'estado:', layer.estado);
+            //console.log('nombre:', layer.nombre, 'estado:', layer.estado);
+            if (layer.estado)
+                $scope.getPoints(layer.nombre);
         });
+        
     };
 
     $scope.getGeometryColumns = function () {
@@ -95,27 +90,31 @@ myApp.controller('controller', function ($scope, Fullscreen, $http) {
 //    var func = './Queries/request.php?func=getPoints&conn=';
 //    var url = func + conn;
 //    //console.log(url);
-//    $scope.getPoints = function () {
-//        $http({method: 'GET', url: url}).
-//                then(function (response) {
-//                    $scope.layers;
-//                    $scope.hospitales = response;
-//                    console.log('yaaaaa');
-//                    /* $scope.hospitales.data.forEach(function (value) {
-//                     for (i = 0; i < value.coordenada.coordinates.length;i++ ){
-//                     console.log("x: " + value.coordenada.coordinates[i][0]+"i: "+i);
-//                     console.log("y: " + value.coordenada.coordinates[i][1]+"i: "+i);
-//                     }
-//                     
-//                     });*/
-//
-//                    //console.log($scope.hospitales.data[1].coordenada.coordinates[0]);
+    $scope.getPoints = function (name) {
+        
+        var conn = 'host=' + $scope.host + '%20port=' + $scope.port + '%20dbname=' + $scope.db + '%20user=' + $scope.user + '%20password=' + $scope.pass;
+        var func = './Queries/request.php?func=getPoints&conn=';
+        var url = func + conn;
+        url += "&name=" + name;
+        $http({method: 'GET', url: url}).
+                then(function (response) {
+                    $scope.layers.puntos = response.data;
+                    console.log(response.data);
+                    /* $scope.hospitales.data.forEach(function (value) {
+                     for (i = 0; i < value.coordenada.coordinates.length;i++ ){
+                     console.log("x: " + value.coordenada.coordinates[i][0]+"i: "+i);
+                     console.log("y: " + value.coordenada.coordinates[i][1]+"i: "+i);
+                     }
+                     
+                     });*/
+
+                    //console.log($scope.hospitales.data[1].coordenada.coordinates[0]);
 //                    var depuredArray = Array();
 //
 //                    for (i = 0; i < $scope.hospitales.data.length; i++) {
-//                 
+//
 //                        if ($scope.hospitales.data[i] !== null) {
-//                            for (j = 0; j < $scope.hospitales.data[i].coordenada.coordinates.length-1; j++) {
+//                            for (j = 0; j < $scope.hospitales.data[i].coordenada.coordinates.length - 1; j++) {
 //
 //                                depuredArray.push($scope.hospitales.data[i].coordenada.coordinates[j]);
 //                            }
@@ -124,13 +123,16 @@ myApp.controller('controller', function ($scope, Fullscreen, $http) {
 //
 //
 //                    $scope.arrayToSend = depuredArray;
-//                    //console.log($scope.arrayToSend);
-//                    //$scope.sendArray($scope.arrayToSend);
-//
-//                }, function () {
+                    //console.log($scope.arrayToSend);
+                    //$scope.sendArray($scope.arrayToSend);
+
+                }
+//                , function () {
 //                    console.log("Error obteniendo los hospitales");
-//                });
-//    };
+//                }
+                        );
+    };
+    
 
 //    $scope.sendArray = function (arreglot) {
 //
