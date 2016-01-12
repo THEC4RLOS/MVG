@@ -14,8 +14,8 @@ if ($func == 'getGeometryColumns') {
     $conn = pg_connect($conn) or die('{"status":1 , "error":"Error de Conexion con la base de datos"}');
     $query = new query();
     $geometryColumns = $query->getGeometryColumns($conn);
-    print_r($geometryColumns);
-    //echo json_encode($geometryColumns);
+    //print_r($geometryColumns);
+    echo json_encode($geometryColumns);
     
 } else if ($func == 'getPoints') {
     //http://localhost:8080/mvg/trunk/Queries/request2.php?func=getPoints&conn=host=localhost%20port=5432%20dbname=cursoGIS%20user=postgres%20password=12345&name=hospitales
