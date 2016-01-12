@@ -55,13 +55,65 @@
                 </div><!-- /.container-fluid -->
             </nav>
         </div> <!-- /.Nav Bar -->
-        <div class="pull-left" style="width: 15.5%; height: 110px; background-color: white"></div>
-        <div class="pull-right" style="width: 84.5%; height: 110px; background-color: white">
-        <!--ul id="visorTab" class="nav nav-tabs">
-            <li id="canvasTab" role="presentation" class="active">  <a href="#">CANVAS</a>  </li>
-            <li id="imgTab" role="presentation" class="">        <a href="#">IMG</a>     </li>
-            <li id="svgTab" role="presentation">                    <a href="#">SVG</a>     </li>            
-        </ul-->
+        
+        <div class="pull-left" style="width: 15.4%; height: 100%; background-color: #d5d5d5"> <!-- Controles y herramientas -->
+            <div style="padding: 1%;">
+                <table>
+                    <tr ng-repeat="capa in capas|orderBy:'prioridad':true">
+                        <td>
+                            <h1 class="label label-default">{{capa.nombre}}</h1>
+                        </td>
+                        <td style="padding-left: 10px; padding-bottom: 50px">
+
+                            <a href="#" class="btn-sm btn-default  glyphicon glyphicon-arrow-up" ng-click="bajar(capa.prioridad)"></a>                        
+                            <a href="#" class="btn-sm btn-default  glyphicon glyphicon-arrow-down" ng-click="subir(capa.prioridad)"></a>                        
+                            <a class="btn btn-default btn-sm" ng-click="aumentarTransparencia(capa.prioridad, 1)">tr+</a>
+                            <a class="btn btn-default btn-sm" ng-click="aumentarTransparencia(capa.prioridad, 0)">tr-</a>
+                            <a href="#" class="btn-sm btn-default glyphicon glyphicon-screenshot" ng-click="enfocar(capa.prioridad)"></a>
+                            <a href="#" class="btn-sm btn-default " ng-class="capa.visible ? 'glyphicon glyphicon-eye-open' : 'glyphicon glyphicon-eye-close'"
+                               ng-click="controlarVisualizacion(capa.prioridad)"></a>                        
+                        </td>
+                    </tr>
+                </table>
+                <hr class="divider">
+                <center>
+                    <div id="panelBotones" style="margin: 1%">                  
+                        <a class="btn btn-default btn-sm glyphicon" ng-click="zoomIn(2)">Reset</a>                
+                    </div>
+                    <table style="margin: 1%">
+                        <tr>
+                            <td></td>
+                            <td><a class="btn btn-default btn-sm  glyphicon glyphicon-chevron-up" ng-click="mov(1)"></a></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td><a class="btn btn-default btn-sm  glyphicon glyphicon-chevron-left" ng-click="mov(4)"></a></td>
+                            <td></td>
+                            <td><a class="btn btn-default btn-sm  glyphicon glyphicon-chevron-right" ng-click="mov(3)"></a></td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td><a class="btn btn-default btn-sm  glyphicon glyphicon-chevron-down" ng-click="mov(0)"></a></td>
+                            <td></td>
+                        </tr>
+                    </table>                
+                    <h1 class="label label-primary"> Zoom </h1>
+
+                    <div style="margin: 2%" class="btn-group">                
+                        <a class="btn btn-default btn-sm" ng-click="zoomIn(1)">+</a>
+                        <a class="btn btn-default btn-sm" ng-click="zoomIn(0)">-</a>
+                    </div>
+                    <div>
+                        <h1 class="label label-primary">Dimension</h1>
+                        <select ng-change="update()"style="margin: 2%" ng-model="selected" ng-options="opt as opt for opt in dim" ng-init="selected = '300x300'"></select>
+                        <!--h3>You have selected : {{selected}}</h3-->
+                    </div>
+
+                </center>
+            </div>
+        </div>  <!-- /.Controles y herramientas -->
+        
+        <div class="pull-right" style="width: 84.5%; height: 110px; background-color: white"> <!-- visualizacion de las capas -->
             
             <div id="exTab2" class="">	
                 <ul class="nav nav-tabs">
@@ -77,8 +129,18 @@
                 </ul>
 
                 <div class="tab-content">
-                    <div class="tab-pane active" id="1">
-                        <h3>Div canvas</h3>
+                    <div class="tab-pane active" id="1" style="background-color: #eee;height:{{sizeY}}px; width:{{sizeX}}px; position: relative;">
+                        <div ng-repeat="capa in capas">
+                            <div style="position: absolute" ng-show="capa.visible">
+                                <table>
+                                    <tr>
+                                        <td>
+                                            <canvas id="{{capa.nombre}}" width="{{sizeX}}" height="{{sizeY}}" style="border:1px solid #a1a1a1;opacity: {{capa.opacidad}};"></canvas>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
                     </div>
                     <div class="tab-pane" id="2">
                         <h3>Div img</h3>
@@ -93,6 +155,7 @@
         <modal lolo="modal1" modal-body="body" modal-footer="footer" modal-header="header" data-ng-click-right-button="myRightButton()" host="host" port="port" db="db" user="user" pass="pass" schema="schema"> <!-- Modal Configuracion de la Base de Datos -->
         </modal><!-- /.Modal Configuracion de la Base de Datos -->
         <!-- data-backdrop="static" -->
+        
         <div data-keyboard="false" class="modal fade popLayerModal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true"> <!-- Modal Ver Capas -->
             <div class="modal-dialog modal-lg" >
                 <div class="modal-content" style="overflow-y: auto;height: 90%" >

@@ -13,15 +13,66 @@ myApp.controller('controller', function ($scope, Fullscreen, $http) {
     $scope.pass = 12345;
     $scope.layers; // todas las caas disponibles
 
+    $scope.dim = ['300x300', '500x500', '700x700', '800x800', '900x900', '1000x1000'];
+    $scope.selected = '300x300';
+    $scope.dimension = 300;
+    $scope.sizeX = $scope.dimension; //tamaño inicial de x
+    $scope.sizeY = $scope.dimension; //tamaño inicial de y
+    $scope.capas = [];
+    $scope.update = function () {
+        $scope.dimension = parseInt($scope.selected.substring(0, $scope.selected.indexOf("x")));
+        $scope.sizeX = $scope.dimension; //tamaño inicial de x
+        $scope.sizeY = $scope.dimension; //tamaño inicial de y 
+        $scope.cambiarTam();
+        //console.log($scope.dimension);
+    };
+
+
     $scope.printGeometryColumns = function () {
+        var i = 0;
         $scope.layers.forEach(function (layer) {
+
             //console.log('nombre:', layer.nombre, 'estado:', layer.estado);
-            if (layer.estado === true && layer.llamada === false){
-                $scope.getPoints(layer.nombre);
+            if (layer.estado === true && layer.llamada === false) {
+                layer.puntos = $scope.getPoints(layer.nombre);
                 layer.llamada = true;
+                
             }
         });
-        
+
+    };
+
+    $scope.visualizarCanvas = function () {
+        $scope.capas.forEach(function (value)
+        {
+            var capa = {
+                    nombre: layer.nombre, //nombre de la capa
+                    prioridad: i, // prioridad de la capa
+                    visible: false, // visible u opculto
+                    url: "", // dirección para crear la imagen
+                    actualizar: false,
+                    opacidad: 1
+                };
+                $scope.capas.push(capa);
+                i++;
+            var canvas = document.getElementById(value.nombre);
+            var context = canvas.getContext('2d');
+            value.puntos.forEach(function (val)
+            {
+                var x = value.coordenada.coordinates[0][0];
+                var y = value.coordenada.coordinates[0][1];
+                x = 10 + Math.round((x - $scope.hospitales.data.Dimensiones.xmin) / $scope.factorProporcional);
+                y = 10 + Math.round((y - $scope.hospitales.data.Dimensiones.ymin) / $scope.factorProporcional);
+                y = $scope.canvasY - y;
+                context.moveTo(x - 5, y);
+                context.lineTo(x + 5, y);
+                context.moveTo(x, y - 5);
+                context.lineTo(x, y + 5);
+                context.strokeStyle = "rgb(255,0,0)";
+                context.stroke();
+            });
+        });
+
     };
 
     $scope.getGeometryColumns = function () {
@@ -94,48 +145,19 @@ myApp.controller('controller', function ($scope, Fullscreen, $http) {
 //    var url = func + conn;
 //    //console.log(url);
     $scope.getPoints = function (name) {
-        
+
         var conn = 'host=' + $scope.host + '%20port=' + $scope.port + '%20dbname=' + $scope.db + '%20user=' + $scope.user + '%20password=' + $scope.pass;
         var func = './Queries/request.php?func=getPoints&conn=';
         var url = func + conn;
         url += "&name=" + name;
         $http({method: 'GET', url: url}).
                 then(function (response) {
-                    $scope.layers.puntos = response.data;
-                    console.log(response.data);
-                    /* $scope.hospitales.data.forEach(function (value) {
-                     for (i = 0; i < value.coordenada.coordinates.length;i++ ){
-                     console.log("x: " + value.coordenada.coordinates[i][0]+"i: "+i);
-                     console.log("y: " + value.coordenada.coordinates[i][1]+"i: "+i);
-                     }
-                     
-                     });*/
-
-                    //console.log($scope.hospitales.data[1].coordenada.coordinates[0]);
-//                    var depuredArray = Array();
-//
-//                    for (i = 0; i < $scope.hospitales.data.length; i++) {
-//
-//                        if ($scope.hospitales.data[i] !== null) {
-//                            for (j = 0; j < $scope.hospitales.data[i].coordenada.coordinates.length - 1; j++) {
-//
-//                                depuredArray.push($scope.hospitales.data[i].coordenada.coordinates[j]);
-//                            }
-//                        }
-//                    }
-//
-//
-//                    $scope.arrayToSend = depuredArray;
-                    //console.log($scope.arrayToSend);
-                    //$scope.sendArray($scope.arrayToSend);
-
-                }
-//                , function () {
-//                    console.log("Error obteniendo los hospitales");
-//                }
-                        );
+                    return response.data;
+//                    $scope.layers.puntos = response.data;
+//                    console.log(response.data);
+                });
     };
-    
+
 
 //    $scope.sendArray = function (arreglot) {
 //

@@ -12,9 +12,9 @@ class query {
      * @param type $conn string de conexión
      * @return type JSON con los valores de nombre de la tabla, srid y tipo de todas las tablas
      */
-    function getGeometryColumns($conn) {
+    function getGeometryColumns($conn, $schema) {
         $respuesta = array();
-        $query = "select f_table_schema, f_table_name, srid, type, 'false' estado, '[]' puntos, 'false' llamada from geometry_Columns where srid = 5367";
+        $query = "select f_table_schema, f_table_name, srid, type, 'false' estado, '[]' puntos, 'false' llamada from geometry_Columns";
         $result = pg_query($conn, $query) or die('{"status":1 , "error":"Error al obtener datos de las tablas (GeometryColumns)"}');
         while ($row = pg_fetch_row($result)) {
             $geometryColumns = array(
