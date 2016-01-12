@@ -57,12 +57,39 @@
         </div> <!-- /.Nav Bar -->
         <div class="pull-left" style="width: 15.5%; height: 110px; background-color: white"></div>
         <div class="pull-right" style="width: 84.5%; height: 110px; background-color: white">
-        <ul class="nav nav-tabs">
-            <li role="presentation" class="active"><a href="#">CANVAS</a></li>
-            <li role="presentation"><a href="#">IMG</a></li>
-            <li role="presentation"><a href="#">SVG</a></li>            
-        </ul>
+        <!--ul id="visorTab" class="nav nav-tabs">
+            <li id="canvasTab" role="presentation" class="active">  <a href="#">CANVAS</a>  </li>
+            <li id="imgTab" role="presentation" class="">        <a href="#">IMG</a>     </li>
+            <li id="svgTab" role="presentation">                    <a href="#">SVG</a>     </li>            
+        </ul-->
+            
+            <div id="exTab2" class="">	
+                <ul class="nav nav-tabs">
+                    <li class="active">
+                        <a  href="#1" data-toggle="tab">CANVAS</a>
+                    </li>
+                    <li>
+                        <a href="#2" data-toggle="tab">IMG</a>
+                    </li>
+                    <li>
+                        <a href="#3" data-toggle="tab">SVG</a>
+                    </li>
+                </ul>
+
+                <div class="tab-content">
+                    <div class="tab-pane active" id="1">
+                        <h3>Div canvas</h3>
+                    </div>
+                    <div class="tab-pane" id="2">
+                        <h3>Div img</h3>
+                    </div>
+                    <div class="tab-pane" id="3">
+                        <h3>Div svg</h3>
+                    </div>
+                </div>
+            </div>
         </div>
+        
         <modal lolo="modal1" modal-body="body" modal-footer="footer" modal-header="header" data-ng-click-right-button="myRightButton()" host="host" port="port" db="db" user="user" pass="pass"> <!-- Modal Configuracion de la Base de Datos -->
         </modal><!-- /.Modal Configuracion de la Base de Datos -->
 
@@ -104,7 +131,7 @@
                     </div>
                 </div>
             </div>
-        </div> <!-- /.Modal Ver Capas -->
+        </div> <!-- /.Modal Ver Capas -->             
 
     </body>
 </html>

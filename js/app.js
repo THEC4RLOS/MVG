@@ -12,6 +12,14 @@ myApp.controller('controller', function ($scope, Fullscreen, $http) {
     $scope.pass = 12345;
     $scope.layers; // todas las caas disponibles
 
+
+    $('.nav-tabs a').click(function (e) {
+        e.preventDefault();
+        $($(e.target).text()).addClass("active");
+        $(this).tab('show');
+        console.log($(e.target).text());
+    });
+
     $scope.printGeometryColumns = function () {
         $scope.layers.forEach(function (layer) {
             console.log('nombre:', layer.nombre, 'estado:', layer.estado);
