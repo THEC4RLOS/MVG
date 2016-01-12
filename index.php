@@ -90,10 +90,10 @@
             </div>
         </div>
         
-        <modal lolo="modal1" modal-body="body" modal-footer="footer" modal-header="header" data-ng-click-right-button="myRightButton()" host="host" port="port" db="db" user="user" pass="pass"> <!-- Modal Configuracion de la Base de Datos -->
+        <modal lolo="modal1" modal-body="body" modal-footer="footer" modal-header="header" data-ng-click-right-button="myRightButton()" host="host" port="port" db="db" user="user" pass="pass" schema="schema"> <!-- Modal Configuracion de la Base de Datos -->
         </modal><!-- /.Modal Configuracion de la Base de Datos -->
-
-        <div  class="modal fade popLayerModal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true"> <!-- Modal Ver Capas -->
+        <!-- data-backdrop="static" -->
+        <div data-keyboard="false" class="modal fade popLayerModal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true"> <!-- Modal Ver Capas -->
             <div class="modal-dialog modal-lg" >
                 <div class="modal-content" style="overflow-y: auto;height: 90%" >
                     <div class="modal-header">
@@ -105,20 +105,22 @@
                             <thead>
                                 <tr>
                                     <th style="width: 15% !important;"><center>Ver</center></th>
+                                    <th style="width: 20% !important;"><center>Esquema</center></th>
                                     <th style="width: 20% !important;"><center>Tabla</center></th>
-                                    <th style="width: 20% !important; "><center>SRID</center></th>
+                                    <th style="width: 15% !important; "><center>SRID</center></th>
                                     <th style="width: 25% !important; "><center>Tipo</center></th>
                                 </tr>                        
                             </thead>
                             <tbody >
-                                <tr ng-repeat="capa in layers">
+                                <tr ng-repeat="capa in layers">                                    
                                     <td style="width: 15% !important;">
                                         <span class="input-group-addon">
                                             <input type="checkbox" aria-label="" ng-model="capa.estado">
                                         </span>
                                     </td>
+                                    <td style="width: 20% !important;"><center>{{capa.esquema}}</center></td>
                                     <td style="width: 20% !important;"><center>{{capa.nombre}}</center></td>
-                                    <td style="width: 20% !important;"><center>{{capa.srid}}</center></td>
+                                    <td style="width: 15% !important;"><center>{{capa.srid}}</center></td>
                                     <td style="width: 25% !important;"><center>{{capa.tipo}}</center></td>
                                 </tr>                        
                                 <!--td><input type="text" id=" otro['id']}"  ui-Blur="miFun({{ otro['id']}},{{ otro['cedula']}},{{ otro['evaluacion']}});" value="{{ otro['nota']}}"  style="width:30px; height: 20px; "></input></td-->
@@ -126,7 +128,7 @@
                         </table>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="printGeometryColumns()">Cerrar</button>
                         <button type="button" class="btn btn-primary" ng-click="printGeometryColumns()">Visualizar</button>
                     </div>
                 </div>

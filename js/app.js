@@ -8,6 +8,7 @@ myApp.controller('controller', function ($scope, Fullscreen, $http) {
     $scope.host = 'localhost';
     $scope.port = 5432;
     $scope.db = 'cursoGIS';
+    $scope.schema = 'schema';
     $scope.user = 'postgres';
     $scope.pass = 12345;
     $scope.layers; // todas las caas disponibles
@@ -15,8 +16,10 @@ myApp.controller('controller', function ($scope, Fullscreen, $http) {
     $scope.printGeometryColumns = function () {
         $scope.layers.forEach(function (layer) {
             //console.log('nombre:', layer.nombre, 'estado:', layer.estado);
-            if (layer.estado)
+            if (layer.estado === true && layer.llamada === false){
                 $scope.getPoints(layer.nombre);
+                layer.llamada = true;
+            }
         });
         
     };
@@ -166,7 +169,8 @@ myApp.directive('modal', function () {
             port: '=port',
             db: '=db',
             user: '=user',
-            pass: '=pass'
+            pass: '=pass',
+            schema: '=schema'
         },
         templateUrl: './view/modal_dbConnect.html',
         transclude: true,

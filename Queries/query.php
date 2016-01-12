@@ -14,16 +14,17 @@ class query {
      */
     function getGeometryColumns($conn) {
         $respuesta = array();
-        $query = "select f_table_name, srid, type, 'false' estado, '[]' puntos, 'false' llamada from geometry_Columns where srid = 5367";
+        $query = "select f_table_schema, f_table_name, srid, type, 'false' estado, '[]' puntos, 'false' llamada from geometry_Columns where srid = 5367";
         $result = pg_query($conn, $query) or die('{"status":1 , "error":"Error al obtener datos de las tablas (GeometryColumns)"}');
         while ($row = pg_fetch_row($result)) {
             $geometryColumns = array(
-                "nombre" => $row[0],
-                "srid" => $row[1],
-                "tipo" => $row[2],
-                "estado" => json_decode($row[3]),
-                "puntos" => json_decode($row[4]),
-                "llamada" => json_decode($row[5])
+                "esquema" => $row[0],
+                "nombre" => $row[1],
+                "srid" => $row[2],
+                "tipo" => $row[3],
+                "estado" => json_decode($row[4]), // cheched en la interfaz
+                "puntos" => json_decode($row[5]),
+                "llamada" => json_decode($row[6]) // si ya se hizo la llamada para obtener los puntos
             );
             array_push($respuesta, $geometryColumns);
         }
@@ -42,7 +43,7 @@ class query {
         $respuesta = array();
 
         //obtener las geometrías x,y
-        $query = "select st_asGeoJSON(geom) from $name limit 5";
+        $query = "select st_asGeoJSON(geom) from $name";
         $result = pg_query($conn, $query) or die('{"status":1 , "error":"Error al obtener los puntos (Points)"}');
         $row = pg_fetch_all($result);
 
