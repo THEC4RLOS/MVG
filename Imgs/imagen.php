@@ -12,10 +12,13 @@ $mx = $_GET['mx'];
 $my = $_GET['my'];
 $capa = $_GET['capa'];
 $type = $_GET['tipo'];
+$conn = $_GET['conn'];
+
+$conn = pg_connect($conn) or die('{"status":1 , "error":"Error de Conexion con la base de datos"}');
 
 
 $graficos = new graficos();
-$img = $graficos->crearImagen($x, $y, $zi, $mx, $my, $capa, $type);
+$img = $graficos->crearImagen($x, $y, $zi, $mx, $my, $capa, $type, $conn);
 
 echo imagepng($img);
 imagedestroy($img);

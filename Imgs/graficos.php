@@ -82,7 +82,7 @@ function mover($nivel, $dimension) {
  * @param type $capa nombre de la capa que solicita
  * @return type.
  */
-function crearImagenPuntos($x, $y, $zi, $mx, $my, $capa) {
+function crearImagenPuntos($x, $y, $zi, $mx, $my, $capa,$conn) {
     $factor = 366468.447793805 / $x; //factor de division respecto a las divisiones
     $img = imagecreatetruecolor($x, $y);
 
@@ -99,15 +99,7 @@ function crearImagenPuntos($x, $y, $zi, $mx, $my, $capa) {
     } else {
         $color = $green;
         $size = 6;
-    }
-
-    $host = 'localhost';
-    $db = 'cursoGIS';
-    $usr = 'postgres';
-    $pass = '12345';
-
-    $strconn = "host=$host port=5432 dbname=$db user=$usr password=$pass";
-    $conn = pg_connect($strconn) or die("Error de Conexion con la base de datos");
+    }   
 
     $query = "select (st_X(st_geometryN(geom,1))-283585.639702539)/$factor X,
           $x- (st_y(st_geometryN(geom,1))-889378.554139937)/$factor  Y
@@ -134,7 +126,7 @@ function crearImagenPuntos($x, $y, $zi, $mx, $my, $capa) {
  * @param type $capa nombre de la capa que solicita
  * @return type.
  */
-function crearImagenLineas($x, $y, $zi, $mx, $my, $capa) {
+function crearImagenLineas($x, $y, $zi, $mx, $my, $capa,$conn) {
     $factor = 366468.447793805 / $x;
     $img = imagecreatetruecolor($x, $y);
 
@@ -150,16 +142,7 @@ function crearImagenLineas($x, $y, $zi, $mx, $my, $capa) {
     }
     imagefilltoborder($img, 0, 0, $trans, $trans);
     imagesavealpha($img, true);
-
-
-    
-    $host = 'localhost';
-    $db = 'cursoGIS';
-    $usr = 'postgres';
-    $pass = '12345';
-
-    $strconn = "host=$host port=5432 dbname=$db user=$usr password=$pass";
-    $conn = pg_connect($strconn) or die("Error de Conexion con la base de datos");
+       
 
     $query = "select r.gid gid,
 	string_agg(CAST(((ST_X(ST_GeometryN(r.geom,1))-283585.639702539)/$factor) as varchar(100)),', ') x,
@@ -198,18 +181,12 @@ from (select ((ST_DumpPoints((ST_GeometryN(geom,1)))).geom) geom, gid
  * @param type $capa nombre de la capa que solicita
  * @return type.
  */
-function crearImagenPoligono($x, $y, $zi, $mx, $my, $capa) {
+function crearImagenPoligono($x, $y, $zi, $mx, $my, $capa,$conn) {
     $factor = 366468.447793805 / $x;
     $img = imagecreatetruecolor($x, $y);
 
     $green = imagecolorallocatealpha($img, 52, 255, 27, 63);
-    $fondo = imagecolorallocatealpha($img, 37, 89, 255, 28);
-    $host = 'localhost';
-    $db = 'cursoGIS';
-    $usr = 'postgres';
-    $pass = '12345';
-    $strconn = "host=$host port=5432 dbname=$db user=$usr password=$pass";
-    $conn = pg_connect($strconn) or die("Error de Conexion con la base de datos");
+    $fondo = imagecolorallocatealpha($img, 37, 89, 255, 28);    
     //889283
     $query1 = "SELECT gid, ndistrito, geom FROM $capa";
 

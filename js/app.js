@@ -18,6 +18,11 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
     $scope.dimension = 600;
     $scope.sizeX = $scope.dimension; //tamaño inicial de x
     $scope.sizeY = $scope.dimension; //tamaño inicial de y
+    $scope.my = 0; //cantidad de peticiones de movimiento al eje y
+    $scope.mx = 0; //cantidad de peticiones de movimiento al eje x
+    $scope.zi = 0; //cantidad de peticiones al zoom
+    $scope.imgUrl = "";
+
     $scope.capas = [];
     $scope.update = function () {
         $scope.dimension = parseInt($scope.selected.substring(0, $scope.selected.indexOf("x")));
@@ -116,6 +121,18 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
             Fullscreen.all();
     };
 
+
+    $scope.showImgs = function () {
+        for (i = 0; i < $scope.capas.length; i++) {
+            if ($scope.capas[i].visible === true) {
+                var fun = $scope.capas[i].url = "Imgs/imagen.php?x=" + $scope.sizeX + "&y=" + $scope.sizeY + "&zi=" + $scope.zi + "&mx=" + $scope.mx + "&my=" + $scope.my + "&capa=" + $scope.capas[i].nombre + "&tipo=";
+                var url = fun + conn;
+                console.log();
+                //$scope.capas[i].url = url;
+            }
+        }
+    
+    };
 });
 myApp.directive('modal', function () {
     return {
