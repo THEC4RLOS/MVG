@@ -1,9 +1,8 @@
 //Controlador del visor
 var myApp = angular.module('app', ['FBAngular']);
 
-myApp.controller('controller', function ($scope, Fullscreen, $http) {
+myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
 
-    
     $scope.header = 'Conexion a Base de Datos';
     $scope.footer = '';
     $scope.host = 'localhost';
@@ -16,7 +15,7 @@ myApp.controller('controller', function ($scope, Fullscreen, $http) {
 
     $scope.dim = ['300x300', '500x500', '700x700', '800x800', '900x900', '1000x1000'];
     $scope.selected = '300x300';
-    $scope.dimension = 300;
+    $scope.dimension = 600;
     $scope.sizeX = $scope.dimension; //tamaño inicial de x
     $scope.sizeY = $scope.dimension; //tamaño inicial de y
     $scope.capas = [];
@@ -25,55 +24,46 @@ myApp.controller('controller', function ($scope, Fullscreen, $http) {
         $scope.sizeX = $scope.dimension; //tamaño inicial de x
         $scope.sizeY = $scope.dimension; //tamaño inicial de y 
         $scope.cambiarTam();
-        //console.log($scope.dimension);
+
     };
 
-
     $scope.printGeometryColumns = function () {
-        var i = 0;
+
         $scope.layers.forEach(function (layer) {
 
-            //console.log('nombre:', layer.nombre, 'estado:', layer.estado);
             if (layer.estado === true && layer.llamada === false) {
-                layer.puntos = $scope.getPoints(layer.nombre);
+                var conn = 'host=' + $scope.host + '%20port=' + $scope.port + '%20dbname=' + $scope.db + '%20user=' + $scope.user + '%20password=' + $scope.pass;
+                myService.async(layer.nombre, conn).then(function (data) {
+                    $scope.data = data;
+                    layer.puntos = data;
+                    console.log('data:', $scope.data);
+                    $scope.drawInCanvasPoints(layer);
+                });
                 layer.llamada = true;
-                
             }
         });
 
     };
 
-    $scope.visualizarCanvas = function () {
-        $scope.capas.forEach(function (value)
-        {
-            var capa = {
-                    nombre: layer.nombre, //nombre de la capa
-                    prioridad: i, // prioridad de la capa
-                    visible: false, // visible u opculto
-                    url: "", // dirección para crear la imagen
-                    actualizar: false,
-                    opacidad: 1
-                };
-                $scope.capas.push(capa);
-                i++;
-            var canvas = document.getElementById(value.nombre);
+    $scope.drawInCanvasPoints = function (layer) {
+
+        if (layer.estado === true && layer.llamada === true) {
+            var canvas = document.getElementById(layer.nombre);
             var context = canvas.getContext('2d');
-            value.puntos.forEach(function (val)
-            {
-                var x = value.coordenada.coordinates[0][0];
-                var y = value.coordenada.coordinates[0][1];
-                x = 10 + Math.round((x - $scope.hospitales.data.Dimensiones.xmin) / $scope.factorProporcional);
-                y = 10 + Math.round((y - $scope.hospitales.data.Dimensiones.ymin) / $scope.factorProporcional);
-                y = $scope.canvasY - y;
-                context.moveTo(x - 5, y);
-                context.lineTo(x + 5, y);
-                context.moveTo(x, y - 5);
-                context.lineTo(x, y + 5);
+
+            layer.puntos.forEach(function (coordenada) {
+                var x = coordenada[0];
+                var y = coordenada[1];
+                x = 10 + Math.round((x - 340735.03802508) / 430.145515478705);
+                y = Math.round((y - 955392.16848899) / 430.145515478705);
+                y = $scope.sizeY - y;
+                context.beginPath();
+                context.arc(x, y, 3, 0, 2 * Math.PI);
+                context.fill();
                 context.strokeStyle = "rgb(255,0,0)";
                 context.stroke();
             });
-        });
-
+        }
     };
 
     $scope.getGeometryColumns = function () {
@@ -82,23 +72,14 @@ myApp.controller('controller', function ($scope, Fullscreen, $http) {
         var conn = 'host=' + $scope.host + '%20port=' + $scope.port + '%20dbname=' + $scope.db + '%20user=' + $scope.user + '%20password=' + $scope.pass;
         var func = './Queries/request.php?func=getGeometryColumns&conn=';
         var url = func + conn;
-        //console.log(url);
+
         $http({method: 'GET', url: url}).
                 then(
                         function (response)
                         {
-                            // $scope.response = response;
                             $scope.layers = response.data;
-                            //console.log(response);
-                            //if ($scope.response.data === 'ok') {
-                            // $scope.footer = 'Conexion exitosa';
-
-                            //} else {
-                            //$scope.footer = 'Error al conectar';
-                            //}
                         }
                 );
-
     };
 
     /*
@@ -135,47 +116,6 @@ myApp.controller('controller', function ($scope, Fullscreen, $http) {
             Fullscreen.all();
     };
 
-
-
-
-    //--------------------------------------------------------------------------
-//    $scope.hospitales = Array();
-//    $scope.arrayToSend = Array();
-//    var conn = 'host=' + $scope.host + '%20port=' + $scope.port + '%20dbname=' + $scope.db + '%20user=' + $scope.user + '%20password=' + $scope.pass + '&name=hospitales';
-//    var func = './Queries/request.php?func=getPoints&conn=';
-//    var url = func + conn;
-//    //console.log(url);
-    $scope.getPoints = function (name) {
-
-        var conn = 'host=' + $scope.host + '%20port=' + $scope.port + '%20dbname=' + $scope.db + '%20user=' + $scope.user + '%20password=' + $scope.pass;
-        var func = './Queries/request.php?func=getPoints&conn=';
-        var url = func + conn;
-        url += "&name=" + name;
-        $http({method: 'GET', url: url}).
-                then(function (response) {
-                    return response.data;
-//                    $scope.layers.puntos = response.data;
-//                    console.log(response.data);
-                });
-    };
-
-
-//    $scope.sendArray = function (arreglot) {
-//
-//        $.ajax({
-//            type: "POST",
-//            url: "receptor.php",
-//            data: {array: JSON.stringify(arreglot)},
-//            success: function (data) {
-//                console.log(data);
-//
-//            }, error: function () {
-//                console.log("ErrroRRRRSAAURIO!");
-//            }
-//        });
-//
-//    };
-
 });
 myApp.directive('modal', function () {
     return {
@@ -201,4 +141,25 @@ myApp.directive('modal', function () {
             $scope.handler = 'pop';
         }
     };
+});
+myApp.factory('myService', function ($http) {
+    var myService = {
+        async: function (name, conn) {
+            //var points = [];
+            //var conn = 'host=' + $scope.host + '%20port=' + $scope.port + '%20dbname=' + $scope.db + '%20user=' + $scope.user + '%20password=' + $scope.pass;
+            var func = './Queries/request.php?func=getPoints&conn=';
+            var url = func + conn;
+            url += "&name=" + name;
+            // $http returns a promise, which has a then function, which also returns a promise
+            var promise = $http.get(url).then(function (response) {
+                // The then function here is an opportunity to modify the response
+                //console.log(response);
+                // The return value gets picked up by the then in the controller.
+                return response.data;
+            });
+            // Return the promise to the controller
+            return promise;
+        }
+    };
+    return myService;
 });
