@@ -42,7 +42,7 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
                     $scope.data = data;
                     layer.puntos = data;
                     console.log('data:', $scope.data);
-                    $scope.drawInCanvasPoints(layer);                    
+                    $scope.drawInCanvasPoints(layer);
                 });
                 layer.llamada = true;
             }
@@ -70,6 +70,19 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
             });
         }
     };
+    /**
+     * Función para seleccionar el método utilizado para dibujar la capa según su tipo
+     * @returns {undefined}
+     */
+    $scope.drawByType = function(layer){
+        if (layer.tipo === "MULTIPOINT"){
+            $scope.drawInCanvasPoints(layer);
+        }
+        else if(layer.tipo === "MULTIPOLYGON"){
+            $scope.drawInCanvasPolygon(layer);                            
+        }
+    }
+    ;
 
     $scope.getGeometryColumns = function () {
         // Accion del boton Base de Datos
@@ -96,7 +109,7 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
         var conn = 'host=' + $scope.host + '%20port=' + $scope.port + '%20dbname=' + $scope.db + '%20user=' + $scope.user + '%20password=' + $scope.pass;
         var func = './Queries/request.php?func=connect&conn=';
         var url = func + conn;
-        console.log("conexion\n"+url);
+        console.log("conexion\n" + url);
         $http({method: 'GET', url: url}).
                 then(
                         function (response)
@@ -123,13 +136,13 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
 
 
     $scope.showImgs = function () {
-        
+
         for (i = 0; i < $scope.layers.length; i++) {
 
             if ($scope.layers[i].estado === true) {
                 var conn = 'host=' + $scope.host + '%20port=' + $scope.port + '%20dbname=' + $scope.db + '%20user=' + $scope.user + '%20password=' + $scope.pass;
                 var fun = "Imgs/imagen.php?x=" + $scope.sizeX + "&y=" + $scope.sizeY + "&zi=" + $scope.zi + "&mx=" + $scope.mx + "&my=" + $scope.my + "&capa=" + $scope.layers[i].nombre + "&tipo=" + $scope.layers[i].tipo;
-                var url = fun + "&conn="+conn;
+                var url = fun + "&conn=" + conn;
                 $scope.layers[i].url = url;
                 console.log($scope.layers[i].url);
             }
