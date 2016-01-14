@@ -8,7 +8,7 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
     $scope.host = 'localhost';
     $scope.port = 5432;
     $scope.db = 'cursoGIS';
-    $scope.schema = 'schema';
+    $scope.schema = 'public';
     $scope.user = 'postgres';
     $scope.pass = 12345;
     $scope.layers; // todas las caas disponibles
@@ -84,13 +84,34 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
     }
     ;
 
+    $scope.drawInCanvasPolygon = function (layer) {
+
+        if (layer.estado === true && layer.llamada === true) {
+            var canvas = document.getElementById(layer.nombre);
+            var context = canvas.getContext('2d');
+
+            layer.puntos.forEach(function (coordenada) {
+                var x = coordenada[0];
+                var y = coordenada[1];
+                x = 10 + Math.round((x - 340735.03802508) / 430.145515478705);
+                y = Math.round((y - 955392.16848899) / 430.145515478705);
+                y = $scope.sizeY - y;
+                context.beginPath();
+                context.lineTo(x, y);
+            });
+            context.fill();
+            context.strokeStyle = "rgb(255,0,0)";
+            context.stroke();
+        }
+    };
+
     $scope.getGeometryColumns = function () {
         // Accion del boton Base de Datos
 
         var conn = 'host=' + $scope.host + '%20port=' + $scope.port + '%20dbname=' + $scope.db + '%20user=' + $scope.user + '%20password=' + $scope.pass;
         var func = './Queries/request.php?func=getGeometryColumns&conn=';
         var url = func + conn;
-
+        url += '&schema=' + $scope.schema;
         $http({method: 'GET', url: url}).
                 then(
                         function (response)

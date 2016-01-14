@@ -14,7 +14,7 @@ class query {
      */
     function getGeometryColumns($conn, $schema) {
         $respuesta = array();
-        $query = "select f_table_schema, f_table_name, srid, type, 'false' estado, '[]' puntos, 'false' llamada from geometry_Columns";
+        $query = "select f_table_schema, f_table_name, srid, type, 'false' estado, '[]' puntos, 'false' llamada from geometry_Columns where f_table_schema = '$schema'";
         $result = pg_query($conn, $query) or die('{"status":1 , "error":"Error al obtener datos de las tablas (GeometryColumns)"}');
         while ($row = pg_fetch_row($result)) {
             $geometryColumns = array(

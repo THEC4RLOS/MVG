@@ -10,7 +10,7 @@ $func = $_GET['func'];
 $conn = $_GET['conn'];
 
 if ($func == 'getGeometryColumns') {
-    $schema = 0;
+    $schema = $_GET['schema'];
     //http://localhost:8080/mvg/trunk/Queries/request.php?func=getGeometryColumns&conn=host=localhost%20port=5432%20dbname=cursoGIS%20user=postgres%20password=12345
     $conn = pg_connect($conn) or die('{"status":1 , "error":"Error de Conexion con la base de datos"}');
     $query = new query();
