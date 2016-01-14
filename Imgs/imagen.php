@@ -13,7 +13,7 @@ $my = $_GET['my'];
 $capa = $_GET['capa'];
 $type = $_GET['tipo'];
 $conn = $_GET['conn'];
-
+//print_r($conn);
 $conn = pg_connect($conn) or die('{"status":1 , "error":"Error de Conexion con la base de datos"}');
 
 

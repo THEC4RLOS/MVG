@@ -20,13 +20,13 @@ class graficos {
      * @param inty $y : Alto
      * @return image : i magen resultante
      */
-    function crearImagen($x, $y, $zi, $mx, $my, $capa, $type) {
-        if ($type == "p") {
-            return crearImagenPuntos($x, $y, $zi, $mx, $my, $capa);
-        } else if ($type == "l") {
-            return crearImagenLineas($x, $y, $zi, $mx, $my, $capa);
-        } else if ($type == "po") {
-            return crearImagenPoligono($x, $y, $zi, $mx, $my, $capa);
+    function crearImagen($x, $y, $zi, $mx, $my, $capa, $type,$conn) {
+        if ($type == "MULTIPOINT") {
+            return crearImagenPuntos($x, $y, $zi, $mx, $my, $capa,$conn);
+        } else if ($type == "MULTILINESTRING") {
+            return crearImagenLineas($x, $y, $zi, $mx, $my, $capa,$conn);
+        } else if ($type == "MULTIPOLYGON") {
+            return crearImagenPoligono($x, $y, $zi, $mx, $my, $capa,$conn);
         }
     }
 

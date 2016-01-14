@@ -142,8 +142,15 @@
                             </div>
                         </div>
                     </div>
-                    <div class="tab-pane" id="2">
-                        <h3>Div img</h3>
+                    <div class="tab-pane" id="2" style="background-color: #eee;height:{{sizeY}}px; width:{{sizeX}}px; position: relative;">
+                        
+                        <div ng-repeat="capa in layers">
+                            <div style="position: absolute" ng-show="capa.estado">
+                                <table>                       
+                                    <img  ng-href="{{capa.url}}" style="opacity: {{capa.opacidad}}"  src="{{capa.url}}" width="{{sizeX}}" height="{{sizeY}}"/>
+                                </table>
+                            </div>
+                        </div>
                     </div>
                     <div class="tab-pane" id="3">
                         <h3>Div svg</h3>
