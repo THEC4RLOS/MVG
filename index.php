@@ -59,27 +59,25 @@
         <div class="pull-left" style="width: 15.4%; height: 100%; background-color: #d5d5d5"> <!-- Controles y herramientas -->
             <div style="padding: 1%;">
                 <table>
-                    <tr ng-repeat="capa in capas|orderBy:'prioridad':true">
-                        <td>
-                            <h1 class="label label-default">{{capa.nombre}}</h1>
+                    <tr ng-repeat="capa in layers|orderBy:'prioridad':true">
+                        <td ng-show="capa.llamada">
+                            <h1 class="label label-default"  >{{capa.nombre}}</h1>
                         </td>
-                        <td style="padding-left: 10px; padding-bottom: 50px">
+                        <td style="padding-left: 10px; padding-bottom: 50px" ng-show="capa.llamada">
 
-                            <a href="#" class="btn-sm btn-default  glyphicon glyphicon-arrow-up" ng-click="bajar(capa.prioridad)"></a>                        
-                            <a href="#" class="btn-sm btn-default  glyphicon glyphicon-arrow-down" ng-click="subir(capa.prioridad)"></a>                        
-                            <a class="btn btn-default btn-sm" ng-click="aumentarTransparencia(capa.prioridad, 1)">tr+</a>
-                            <a class="btn btn-default btn-sm" ng-click="aumentarTransparencia(capa.prioridad, 0)">tr-</a>
-                            <a href="#" class="btn-sm btn-default glyphicon glyphicon-screenshot" ng-click="enfocar(capa.prioridad)"></a>
-                            <a href="#" class="btn-sm btn-default " ng-class="capa.visible ? 'glyphicon glyphicon-eye-open' : 'glyphicon glyphicon-eye-close'"
-                               ng-click="controlarVisualizacion(capa.prioridad)"></a>                        
+                            <a href="#" class="btn-sm btn-default  glyphicon glyphicon-arrow-up" ng-click="bajar(capa)"></a>                        
+                            <a class="btn btn-default btn-sm" ng-click="aumentarTransparencia(capa, 0)">tr-</a>                            
+                            <a class="btn btn-default btn-sm" ng-click="aumentarTransparencia(capa, 1)">tr+</a>
+                            <a href="#" class="btn-sm btn-default  glyphicon glyphicon-arrow-down" ng-click="subir(capa)"></a>                        
+                            <a href="#" class="btn-sm btn-default glyphicon glyphicon-screenshot" ng-click="enfocar(capa)"></a>
+                            <a href="#" class="btn-sm btn-default " ng-class="capa.estado ? 'glyphicon glyphicon-eye-open' : 'glyphicon glyphicon-eye-close'"
+                               ng-click="controlarVisualizacion(capa)"></a>                        
                         </td>
                     </tr>
                 </table>
                 <hr class="divider">
                 <center>
-                    <div id="panelBotones" style="margin: 1%">                  
-                        <a class="btn btn-default btn-sm glyphicon" ng-click="zoomIn(2)">Reset</a>                
-                    </div>
+                    
                     <table style="margin: 1%">
                         <tr>
                             <td></td>
@@ -102,6 +100,9 @@
                     <div style="margin: 2%" class="btn-group">                
                         <a class="btn btn-default btn-sm" ng-click="zoomIn(1)">+</a>
                         <a class="btn btn-default btn-sm" ng-click="zoomIn(0)">-</a>
+                    
+                        <a class="btn btn-default btn-sm glyphicon" ng-click="zoomIn(2)">Reset</a>                
+                    
                     </div>
                     <div>
                         <h1 class="label label-primary">Dimension</h1>

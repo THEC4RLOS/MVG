@@ -24,7 +24,9 @@ class query {
                 "tipo" => $row[3],
                 "estado" => json_decode($row[4]), // cheched en la interfaz
                 "puntos" => json_decode($row[5]),
-                "llamada" => json_decode($row[6]) // si ya se hizo la llamada para obtener los puntos
+                "llamada" => json_decode($row[6]), // si ya se hizo la llamada para obtener los puntos
+                "opacidad" => 1,
+                "actualizar" => false
             );
             array_push($respuesta, $geometryColumns);
         }

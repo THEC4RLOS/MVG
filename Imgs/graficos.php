@@ -127,6 +127,7 @@ function crearImagenPuntos($x, $y, $zi, $mx, $my, $capa,$conn) {
  * @return type.
  */
 function crearImagenLineas($x, $y, $zi, $mx, $my, $capa,$conn) {
+    set_time_limit(300);//elimitar el límite de tiempo de ejecución de la consulta
     $factor = 366468.447793805 / $x;
     $img = imagecreatetruecolor($x, $y);
 

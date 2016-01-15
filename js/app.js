@@ -23,7 +23,7 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
     $scope.zi = 0; //cantidad de peticiones al zoom
     $scope.imgUrl = "";
 
-    $scope.capas = [];
+    $scope.layers = [];
     $scope.update = function () {
         $scope.dimension = parseInt($scope.selected.substring(0, $scope.selected.indexOf("x")));
         $scope.sizeX = $scope.dimension; //tamaño inicial de x
@@ -31,7 +31,27 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
         $scope.cambiarTam();
 
     };
+    /**
+     * Funcion para cambiar el tamaño del panel, actualiza las capas cuya visibilidad esté 
+     * activada
+     * @returns{undefined}
+     */
+    $scope.cambiarTam = function () {
 
+        for (i = 0; i < $scope.layers.length; i++) {
+            
+            //si la capa actual tiene como estado visible, entonces actualizar
+            //el tamaño de la imagen de acuerdo a las dimesiones
+            if ($scope.layers[i].estado === true) {
+                console.log("hola");
+                var conn = 'host=' + $scope.host + '%20port=' + $scope.port + '%20dbname=' + $scope.db + '%20user=' + $scope.user + '%20password=' + $scope.pass;
+                var fun = "Imgs/imagen.php?x=" + $scope.sizeX + "&y=" + $scope.sizeY + "&zi=" + $scope.zi + "&mx=" + $scope.mx + "&my=" + $scope.my + "&capa=" + $scope.layers[i].nombre + "&tipo=" + $scope.layers[i].tipo;
+                var url = fun + "&conn=" + conn;
+                $scope.layers[i].url = url;
+            }
+        }
+
+    };
     $scope.printGeometryColumns = function () {
 
         $scope.layers.forEach(function (layer) {
@@ -80,8 +100,7 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
         } else if (layer.tipo === "MULTIPOLYGON") {
             $scope.drawInCanvasPolygon(layer);
         }
-    }
-    ;
+    };
 
     $scope.drawInCanvasPolygon = function (layer) {
 
@@ -89,7 +108,7 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
             var canvas = document.getElementById(layer.nombre);
             var context = canvas.getContext('2d');
             var mover = false;
-            
+
             context.beginPath();
             layer.puntos.forEach(function (coordenada) {
                 console.log('si');
@@ -161,7 +180,7 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
             Fullscreen.all();
     };
 
-
+    ////----------------------------------------------sección para las imgs
     $scope.showImgs = function () {
 
         for (i = 0; i < $scope.layers.length; i++) {
@@ -171,7 +190,193 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
                 var fun = "Imgs/imagen.php?x=" + $scope.sizeX + "&y=" + $scope.sizeY + "&zi=" + $scope.zi + "&mx=" + $scope.mx + "&my=" + $scope.my + "&capa=" + $scope.layers[i].nombre + "&tipo=" + $scope.layers[i].tipo;
                 var url = fun + "&conn=" + conn;
                 $scope.layers[i].url = url;
-                console.log($scope.layers[i].url);
+
+            }
+        }
+    };
+    /*
+     * Funcion para controlar la opcion de ocultar y mostrar una determinada capa
+     * @param {type} id entero que además de ser id, funciona para representar la posicion
+     * del objeto dentro del arreglo
+     * @returns {undefined}
+     */
+    $scope.controlarVisualizacion = function (layer) {
+        var id = $scope.layers.indexOf(layer);
+
+        if ($scope.layers[id].estado === false) {
+            $scope.layers[id].estado = true;
+            var conn = 'host=' + $scope.host + '%20port=' + $scope.port + '%20dbname=' + $scope.db + '%20user=' + $scope.user + '%20password=' + $scope.pass;
+            //si es la primera vez que se muestran
+            if ($scope.layers[id].url === "") {
+                //mostrar la capa requerida                       
+
+                var fun = "Imgs/imagen.php?x=" + $scope.sizeX + "&y=" + $scope.sizeY + "&zi=" + $scope.zi + "&mx=" + $scope.mx + "&my=" + $scope.my + "&capa=" + $scope.layers[i].nombre + "&tipo=" + $scope.layers[i].tipo;
+                var url = fun + "&conn=" + conn;
+                $scope.layers[id].url = url;
+                console.log($scope.layers[id].url);
+            } else if ($scope.layers[id].actualizar === true) {
+                console.log($scope.layers[id].url);
+                $scope.layers[id].actualizar = false;
+                var fun = "Imgs/imagen.php?x=" + $scope.sizeX + "&y=" + $scope.sizeY + "&zi=" + $scope.zi + "&mx=" + $scope.mx + "&my=" + $scope.my + "&capa=" + $scope.layers[i].nombre + "&tipo=" + $scope.layers[i].tipo;
+                var url = fun + "&conn=" + conn;
+                $scope.layers[id].url = url;
+            }
+        }
+
+        //si se solicita un cambio en el estado de visualizacion y se sabe que
+        // esta mostrandose entonces se oculta
+        else {
+            $scope.layers[id].estado = false;
+        }
+    };
+
+    /**
+     * Funcion para ordenar las capas, sube la capa dado su id y sube la capa que tenía el
+     * lugar de la capa actual
+     * @param {type}identificador que a la vez funciona como la posicion de la capa en el 
+     * arrrreglo
+     * @returns {undefined}
+     */
+    $scope.subir = function (layer) {
+        var id = $scope.layers.indexOf(layer);
+        if (id > 0) {
+            var temp = $scope.layers[id - 1];
+            $scope.layers[id - 1] = $scope.layers[id];
+            $scope.layers[id] = temp;
+        }
+    };
+
+    /**
+     * Funcion para ordenar las capas, baja la capa dado su id y sube la capa que tenía el
+     * lugar de la capa actual
+     * @param {type} id identificador que a la vez funciona como la posicion de la capa en el 
+     * arrrreglo
+     * @returns {undefined}
+     */
+    $scope.bajar = function (layer) {
+
+        var id = $scope.layers.indexOf(layer);
+        if (id < $scope.layers.length - 1) {
+            var temp = $scope.layers[id + 1];
+            $scope.layers[id + 1] = $scope.layers[id];
+            $scope.layers[id] = temp;
+        }
+    };
+
+    /**
+     * Funcion para aumentar la transparencia de una capa, dado su identificador
+     * aumenta o disminuye en su estilo la opacidad de la misma
+     * @param {type} layer objeto de la capa
+     * @param {type} ind indicador de la accion a realizar (subir o bajar la tranparencia)
+     * @returns {undefined}
+     */
+    $scope.aumentarTransparencia = function (layer, ind) {
+
+        var id = $scope.layers.indexOf(layer);
+        console.log($scope.layers[id].opacidad);
+        if (ind === 1 && $scope.layers[id].opacidad > 0) {
+            $scope.layers[id].opacidad -= 0.1;
+            // console.log($scope.layers[id].opacidad);
+            //$scope.layers[id].url = "Imgs/imagen.php?x=" + $scope.sizeX + "&y=" + $scope.sizeY + "&zi=" + $scope.zi + "&mx=" + $scope.mx + "&my=" + $scope.my + "&capa=" + $scope.layers[id].nombre + "&tipo=" + $scope.layers[id].tipo;
+        }
+        else {
+            if ($scope.layers[id].opacidad < 1) {
+                $scope.layers[id].opacidad += 0.1;
+            }
+            //console.log($scope.layers[id].opacidad);
+        }
+    };
+    /**
+     * Funcion que suma y resta la cantidad de movientos a la izquierda que solicita el usuario
+     * el movimiento se realiza en las coordenadas x,y
+     * @param {type} ind indicador del movimiento que debe realizar la imagen
+     * 
+     * @returns {undefined}
+     */
+    $scope.mov = function (ind) {
+        // realizar el movimiento de bajar la imagen en x
+        // lo que da el efecto de que el visor se mueve hacia arriba
+        if (ind === 0) {
+            $scope.my += 1;
+        }
+        // realicar el movimiento de la imagen hacia arriba
+        else if (ind === 1)
+        {
+            $scope.my -= 1;
+        }
+
+        //izquierda
+        else if (ind === 3) {
+            $scope.mx += 1;
+        }
+        //derecha
+        else if (ind === 4) {
+            $scope.mx -= 1;
+        }
+        for (i = 0; i < $scope.layers.length; i++) {
+            if ($scope.layers[i].estado === true) {
+                var conn = 'host=' + $scope.host + '%20port=' + $scope.port + '%20dbname=' + $scope.db + '%20user=' + $scope.user + '%20password=' + $scope.pass;
+                var fun = "Imgs/imagen.php?x=" + $scope.sizeX + "&y=" + $scope.sizeY + "&zi=" + $scope.zi + "&mx=" + $scope.mx + "&my=" + $scope.my + "&capa=" + $scope.layers[i].nombre + "&tipo=" + $scope.layers[i].tipo;
+                var url = fun + "&conn=" + conn;
+                $scope.layers[i].url = url;
+
+            } else {
+                if ($scope.layers[i].url !== "") {
+                    $scope.layers[i].actualizar = true; //variable necesaria para acutalizar en caso de 
+                    //realizar algunos cambios y que la capa no esté disponible
+                }
+            }
+        }
+    };
+    /**
+     * Funcion para raalizar zoom, modifica dependiendo de su parametro el varlor
+     * del zoom del visor y 
+     * @param {type} ind indicador para saber si la operacion es de acercar,, alejar o resetear al zoom default
+     * @returns {undefined}
+     */
+
+    $scope.zoomIn = function (ind) {
+
+        if (ind === 1) {
+            $scope.zi = $scope.zi + 1;
+        } else if (ind === 0) {
+            $scope.zi = $scope.zi - 1;
+        } else {
+            $scope.zi = 0;
+        }
+        for (i = 0; i < $scope.layers.length; i++) {
+            if ($scope.layers[i].estado === true) {
+                var conn = 'host=' + $scope.host + '%20port=' + $scope.port + '%20dbname=' + $scope.db + '%20user=' + $scope.user + '%20password=' + $scope.pass;
+                var fun = "Imgs/imagen.php?x=" + $scope.sizeX + "&y=" + $scope.sizeY + "&zi=" + $scope.zi + "&mx=" + $scope.mx + "&my=" + $scope.my + "&capa=" + $scope.layers[i].nombre + "&tipo=" + $scope.layers[i].tipo;
+                var url = fun + "&conn=" + conn;
+                $scope.layers[i].url = url;
+            } else {
+                if ($scope.layers[i].url !== "") {
+                    $scope.layers[i].actualizar = true;
+                }
+            }
+        }
+    };
+    /*
+     * Funcion para enfocar la capa seleccionada
+     * recibe la capa a enfocar
+     */
+    $scope.enfocar = function (layer) {
+        var id = $scope.layers.indexOf(layer);
+
+        var temp = $scope.layers[id];
+        $scope.layers[id] = $scope.layers[$scope.layers.length - 1];
+        $scope.layers[$scope.layers.length - 1] = temp;
+        $scope.zi = -1;
+
+        for (i = 0; i < $scope.layers.length; i++) {
+            //si la capa actual tiene como estado visible, entonces actualizar
+            //el tamaño de la imagen de acuerdo a las dimesiones
+            if ($scope.layers[i].estado === true) {
+                var conn = 'host=' + $scope.host + '%20port=' + $scope.port + '%20dbname=' + $scope.db + '%20user=' + $scope.user + '%20password=' + $scope.pass;
+                var fun = "Imgs/imagen.php?x=" + $scope.sizeX + "&y=" + $scope.sizeY + "&zi=" + $scope.zi + "&mx=" + $scope.mx + "&my=" + $scope.my + "&capa=" + $scope.layers[i].nombre + "&tipo=" + $scope.layers[i].tipo;
+                var url = fun + "&conn=" + conn;
+                $scope.layers[i].url = url;
             }
         }
 
