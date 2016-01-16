@@ -7,7 +7,7 @@
  * and open the template in the editor.
  */
 
-set_time_limit(300); //elimitar el límite de tiempo de ejecución de la consulta
+set_time_limit(500); //elimitar el límite de tiempo de ejecución de la consulta
 /**
  * Description of newPHPClass
  *
@@ -25,8 +25,9 @@ class graficos {
         if ($type == "MULTIPOINT") {
             return crearImagenPuntos($x, $y, $zi, $mx, $my, $capa,$rgb, $conn);
         } else if ($type == "MULTILINESTRING") {
+            $rgb =substr($rgb, 1,-1);
             return crearImagenLineas($x, $y, $zi, $mx, $my, $capa,$rgb, $conn);
-        } else if ($type == "MULTIPOLYGON") {
+        } else if ($type == "MULTIPOLYGON") {            
             return crearImagenPoligono($x, $y, $zi, $mx, $my, $capa, $conn);
         }
     }

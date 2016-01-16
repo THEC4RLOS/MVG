@@ -138,7 +138,7 @@
                                 <table>
                                     <tr>
                                         <td>                                            
-                                            <canvas id="{{capa.nombre}}" width="{{sizeX}}" height="{{sizeY}}" style="border:1px solid #a1a1a1;opacity: 1    ;"></canvas>
+                                            <canvas id="{{capa.nombre}}" width="{{sizeX}}" height="{{sizeY}}" style="border:1px solid #a1a1a1;opacity: {{capa.opacidad}}    ;"></canvas>
                                         </td>
                                     </tr>
                                 </table>
@@ -147,15 +147,27 @@
                     </div>
        
                     <div  class="tab-pane" id="3" style="background-color: #eee;height:{{sizeY}}px; width:{{sizeX}}px; position: absolute;">
-                        <svg ng-repeat="capa in SVGLayers" style=" width: {{sizeX}}px; height: {{sizeY}}px; border:1px solid #a1a1a1;opacity: 1    ">
-                        <circle ng-repeat="punto in capa.puntos"
-                                cx="{{0.155*sizeX+((punto[0] -340735.03802508) / (366468.447793805/sizeX))}}" 
-                                cy="{{(sizeY-((0.178*sizeX+(punto[1] - 955392.16848899)/(366468.447793805/sizeY))))}}" 
-                                r="3.2" 
-                                stroke="gray" 
-                                stroke-width="0" 
-                                fill="rgb({{capa.color[0]}},{{capa.color[1]}},{{capa.color[2]}})" />
-                        </svg>
+                        <div ng-repeat="capa in layers">
+
+                            <div style="position: absolute" ng-show="capa.estado">
+                                <table>
+                                    <tr>
+                                        <td>                                            
+                                            <svg  style=" width: {{sizeX}}px; height: {{sizeY}}px; border:1px solid #a1a1a1;opacity: 1    ">
+                                            <circle ng-repeat="punto in capa.puntos"
+                                                    cx="{{0.155*sizeX+((punto[0] -340735.03802508) / (366468.447793805/sizeX))}}" 
+                                                    cy="{{(sizeY-((0.178*sizeX+(punto[1] - 955392.16848899)/(366468.447793805/sizeY))))}}" 
+                                                    r="3.2" 
+                                                    stroke="gray" 
+                                                    stroke-width="0" 
+                                                    fill="rgb({{capa.color[0]}},{{capa.color[1]}},{{capa.color[2]}})" />
+                                            </svg>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                       
                         
                        
                         
