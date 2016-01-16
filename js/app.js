@@ -12,6 +12,7 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
     $scope.user = 'postgres';
     $scope.pass = 12345;
     $scope.layers; // todas las caas disponibles
+    $scope.SVGLayers = Array();
 
     $scope.dim = ['300x300', '500x500', '700x700', '800x800', '900x900', '1000x1000'];
     $scope.selected = '300x300';
@@ -54,9 +55,9 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
 
     };
     $scope.printGeometryColumns = function () {
-
+        
         $scope.layers.forEach(function (layer) {
-
+            
             if (layer.estado === true && layer.llamada === false) {
                 var conn = 'host=' + $scope.host + '%20port=' + $scope.port + '%20dbname=' + $scope.db + '%20user=' + $scope.user + '%20password=' + $scope.pass;
                 myService.async(layer.nombre, conn).then(function (data) {
@@ -64,6 +65,7 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
                     layer.puntos = data;
                     console.log('data:', $scope.data);
                     $scope.drawByType(layer);
+                    $scope.SVGLayers.push(layer);
                 });
                 layer.llamada = true;
             }
@@ -90,12 +92,12 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
         if (layer.estado === true && layer.llamada === true) {
             var canvas = document.getElementById(layer.nombre);
             var context = canvas.getContext('2d');
-
+            
             layer.puntos.forEach(function (coordenada) {
                 var x = coordenada[0];
                 var y = coordenada[1];
-                x = 10 + Math.round((x - 340735.03802508) / 430.145515478705);
-                y = Math.round((y - 955392.16848899) / 430.145515478705);
+                x = $scope.sizeY*0.15 + Math.round((x - 340735.03802508) / (366468.447793805/$scope.sizeY));
+                y = Math.round((y - 955392.16848899) / (366468.447793805/$scope.sizeY));
                 y = $scope.sizeY - y;
                 context.beginPath();
                 context.arc(x, y, 3, 0, 2 * Math.PI);
@@ -165,6 +167,7 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
                         function (response)
                         {
                             $scope.layers = response.data;
+                            console.log( $scope.layers);
                         }
                 );
     };
@@ -214,8 +217,7 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
                     "&my=" + $scope.my + "&capa=" + $scope.layers[i].nombre + "&tipo=" + $scope.layers[i].tipo+"&rgb="+$scope.layers[i].color;
                 var url = fun + "&conn=" + conn;
                 $scope.layers[i].url = url;
-                console.log($scope.layers[i].url);
-                console.log($scope.layers[i].color);
+              
             }
         }
     };
@@ -241,7 +243,7 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
                 $scope.layers[id].url = url;
                 
             } else if ($scope.layers[id].actualizar === true) {
-                console.log($scope.layers[id].url);
+              
                 $scope.layers[id].actualizar = false;
                 var fun = "Imgs/imagen.php?x=" + $scope.sizeX + "&y=" + $scope.sizeY + "&zi=" + $scope.zi +
                     "&mx=" + $scope.mx + "&my=" + $scope.my + "&capa=" + $scope.layers[i].nombre + "&tipo=" + $scope.layers[i].tipo+"&rgb="+$scope.layers[i].color;
@@ -300,7 +302,7 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
     $scope.aumentarTransparencia = function (layer, ind) {
 
         var id = $scope.layers.indexOf(layer);
-        console.log($scope.layers[id].opacidad);
+      
         if (ind === 1 && $scope.layers[id].opacidad > 0) {
             $scope.layers[id].opacidad -= 0.1;
             // console.log($scope.layers[id].opacidad);
@@ -409,8 +411,10 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
                 $scope.layers[i].url = url;
             }
         }
-
     };
+    
+    ///funciones de svg------------------------------------------------------
+    
 });
 myApp.directive('modal', function () {
     return {

@@ -18,9 +18,9 @@
         <script src="./js/app.js"></script>
     </head> <!-- /.head -->
     <body ng-app="app" ng-controller="controller">
-        
+
         <div Fullscreen></div>
-        
+
         <div> <!-- Nav Bar -->
             <nav class="navbar navbar-default">
                 <div class="container-fluid">
@@ -55,7 +55,7 @@
                 </div><!-- /.container-fluid -->
             </nav>
         </div> <!-- /.Nav Bar -->
-        
+
         <div class="pull-left" style="width: 15.4%; height: 100%; background-color: #d5d5d5"> <!-- Controles y herramientas -->
             <div style="padding: 1%;">
                 <table>
@@ -77,7 +77,7 @@
                 </table>
                 <hr class="divider">
                 <center>
-                    
+
                     <table style="margin: 1%">
                         <tr>
                             <td></td>
@@ -100,9 +100,9 @@
                     <div style="margin: 2%" class="btn-group">                
                         <a class="btn btn-default btn-sm" ng-click="zoomIn(1)">+</a>
                         <a class="btn btn-default btn-sm" ng-click="zoomIn(0)">-</a>
-                    
+
                         <a class="btn btn-default btn-sm glyphicon" ng-click="zoomIn(2)">Reset</a>                
-                    
+
                     </div>
                     <div>
                         <h1 class="label label-primary">Dimension</h1>
@@ -113,9 +113,9 @@
                 </center>
             </div>
         </div>  <!-- /.Controles y herramientas -->
-        
+
         <div class="pull-right" style="width: 84.5%; height: 110px; background-color: white"> <!-- visualizacion de las capas -->
-            
+
             <div id="exTab2" class="">	
                 <ul class="nav nav-tabs">
                     <li class="active" title="Visualizacion en etiqueta CANVAS">
@@ -144,7 +144,7 @@
                         </div>
                     </div>
                     <div class="tab-pane" id="2" style="background-color: #eee;height:{{sizeY}}px; width:{{sizeX}}px; position: relative;">
-                        
+
                         <div ng-repeat="capa in layers">
                             <div style="position: absolute" ng-show="capa.estado">
                                 <table>                       
@@ -153,58 +153,79 @@
                             </div>
                         </div>
                     </div>
-                    <div class="tab-pane" id="3">
-                        <h3>Div svg</h3>
+                    <div  class="tab-pane" id="3" style="background-color: #eee;height:{{sizeY}}px; width:{{sizeX}}px; position: absolute;">
+                        <svg ng-repeat="capa in SVGLayers" style=" width: {{sizeX}}px; height: {{sizeY}}px">
+                        <circle ng-repeat="punto in capa.puntos"
+                                cx="{{0.15*sizeX+((punto[0] -340735.03802508) / (366468.447793805/sizeX))}}" 
+                                cy="{{(sizeY-((punto[1] - 955392.16848899)/(366468.447793805/sizeY)))}}" 
+                                r="3" 
+                                stroke="gray" 
+                                stroke-width="0" 
+                                fill="cyan" />
+                        </svg>
+                        
+                       
+                        
+                        <!--svg  width="640" height="480" 
+                              style="border: 1px solid forestgreen ; position: absolute; padding: 40px">
+                        <line
+                                x1="10" 
+                                y1="10" 
+                                x2="20" 
+                                y2="20" 
+                                style="stroke:rgb(255,0,0);stroke-width:2" />
+                        </svg--->
+
                     </div>
                 </div>
             </div>
         </div>
-        
-        <modal lolo="modal1" modal-body="body" modal-footer="footer" modal-header="header" data-ng-click-right-button="myRightButton()" host="host" port="port" db="db" user="user" pass="pass" schema="schema"> <!-- Modal Configuracion de la Base de Datos -->
-        </modal><!-- /.Modal Configuracion de la Base de Datos -->
-        <!-- data-backdrop="static" -->
-        
-        <div data-keyboard="false" class="modal fade popLayerModal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true"> <!-- Modal Ver Capas -->
-            <div class="modal-dialog modal-lg" >
-                <div class="modal-content" style="overflow-y: auto;height: 90%" >
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                        <center><h4 class="modal-title">Capas Disponibles</h4></center>
-                    </div>
-                    <div class="modal-body">
-                        <table class="table table-striped table-header-rotated scroll" >
-                            <thead>
-                                <tr>
-                                    <th style="width: 15% !important;"><center>Ver</center></th>
-                                    <th style="width: 20% !important;"><center>Esquema</center></th>
-                                    <th style="width: 20% !important;"><center>Tabla</center></th>
-                                    <th style="width: 15% !important; "><center>SRID</center></th>
-                                    <th style="width: 25% !important; "><center>Tipo</center></th>
-                                </tr>                        
-                            </thead>
-                            <tbody >
-                                <tr ng-repeat="capa in layers">                                    
-                                    <td style="width: 15% !important;">
-                                        <span class="input-group-addon">
-                                            <input type="checkbox" aria-label="" ng-model="capa.estado">
-                                        </span>
-                                    </td>
-                                    <td style="width: 20% !important;"><center>{{capa.esquema}}</center></td>
-                                    <td style="width: 20% !important;"><center>{{capa.nombre}}</center></td>
-                                    <td style="width: 15% !important;"><center>{{capa.srid}}</center></td>
-                                    <td style="width: 25% !important;"><center>{{capa.tipo}}</center></td>
-                                </tr>                        
-                                <!--td><input type="text" id=" otro['id']}"  ui-Blur="miFun({{ otro['id']}},{{ otro['cedula']}},{{ otro['evaluacion']}});" value="{{ otro['nota']}}"  style="width:30px; height: 20px; "></input></td-->
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="printGeometryColumns()">Cerrar</button>
-                        <button type="button" class="btn btn-primary" ng-click="printGeometryColumns()">Visualizar</button>
-                    </div>
+
+    <modal lolo="modal1" modal-body="body" modal-footer="footer" modal-header="header" data-ng-click-right-button="myRightButton()" host="host" port="port" db="db" user="user" pass="pass" schema="schema"> <!-- Modal Configuracion de la Base de Datos -->
+    </modal><!-- /.Modal Configuracion de la Base de Datos -->
+    <!-- data-backdrop="static" -->
+
+    <div data-keyboard="false" class="modal fade popLayerModal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true"> <!-- Modal Ver Capas -->
+        <div class="modal-dialog modal-lg" >
+            <div class="modal-content" style="overflow-y: auto;height: 90%" >
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <center><h4 class="modal-title">Capas Disponibles</h4></center>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-striped table-header-rotated scroll" >
+                        <thead>
+                            <tr>
+                                <th style="width: 15% !important;"><center>Ver</center></th>
+                        <th style="width: 20% !important;"><center>Esquema</center></th>
+                        <th style="width: 20% !important;"><center>Tabla</center></th>
+                        <th style="width: 15% !important; "><center>SRID</center></th>
+                        <th style="width: 25% !important; "><center>Tipo</center></th>
+                        </tr>                        
+                        </thead>
+                        <tbody >
+                            <tr ng-repeat="capa in layers">                                    
+                                <td style="width: 15% !important;">
+                                    <span class="input-group-addon">
+                                        <input type="checkbox" aria-label="" ng-model="capa.estado">
+                                    </span>
+                                </td>
+                                <td style="width: 20% !important;"><center>{{capa.esquema}}</center></td>
+                        <td style="width: 20% !important;"><center>{{capa.nombre}}</center></td>
+                        <td style="width: 15% !important;"><center>{{capa.srid}}</center></td>
+                        <td style="width: 25% !important;"><center>{{capa.tipo}}</center></td>
+                        </tr>                        
+                        <!--td><input type="text" id=" otro['id']}"  ui-Blur="miFun({{ otro['id']}},{{ otro['cedula']}},{{ otro['evaluacion']}});" value="{{ otro['nota']}}"  style="width:30px; height: 20px; "></input></td-->
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="printGeometryColumns()">Cerrar</button>
+                    <button type="button" class="btn btn-primary" ng-click="printGeometryColumns()">Visualizar</button>
                 </div>
             </div>
-        </div> <!-- /.Modal Ver Capas -->             
+        </div>
+    </div> <!-- /.Modal Ver Capas -->             
 
-    </body>
+</body>
 </html>
