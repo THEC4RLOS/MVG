@@ -121,21 +121,23 @@
                     <li class="active" title="Visualizacion en etiqueta CANVAS">
                         <a  href="#1" data-toggle="tab">CANVAS</a>
                     </li>
-                    <li title="Visualizacion en etiqueta IMG">
-                        <a href="#2" data-toggle="tab">IMG</a>
-                    </li>
                     <li title="Visualizacion en etiqueta SVG">
                         <a href="#3" data-toggle="tab">SVG</a>
                     </li>
+                    <li title="Visualizacion en etiqueta IMG">
+                        <a href="#2" data-toggle="tab">IMG</a>
+                    </li>
+                    
                 </ul>
 
                 <div class="tab-content">
                     <div class="tab-pane active" id="1" style="background-color: #eee;height:{{sizeY}}px; width:{{sizeX}}px; position: relative;">
                         <div ng-repeat="capa in layers">
+                            
                             <div style="position: absolute" ng-show="capa.estado">
                                 <table>
                                     <tr>
-                                        <td>
+                                        <td>                                            
                                             <canvas id="{{capa.nombre}}" width="{{sizeX}}" height="{{sizeY}}" style="border:1px solid #a1a1a1;opacity: 1    ;"></canvas>
                                         </td>
                                     </tr>
@@ -143,25 +145,16 @@
                             </div>
                         </div>
                     </div>
-                    <div class="tab-pane" id="2" style="background-color: #eee;height:{{sizeY}}px; width:{{sizeX}}px; position: relative;">
-
-                        <div ng-repeat="capa in layers">
-                            <div style="position: absolute" ng-show="capa.estado">
-                                <table>                       
-                                    <img  ng-href="{{capa.url}}" style="opacity: {{capa.opacidad}}"  src="{{capa.url}}" width="{{sizeX}}" height="{{sizeY}}"/>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
+       
                     <div  class="tab-pane" id="3" style="background-color: #eee;height:{{sizeY}}px; width:{{sizeX}}px; position: absolute;">
-                        <svg ng-repeat="capa in SVGLayers" style=" width: {{sizeX}}px; height: {{sizeY}}px">
+                        <svg ng-repeat="capa in SVGLayers" style=" width: {{sizeX}}px; height: {{sizeY}}px; border:1px solid #a1a1a1;opacity: 1    ">
                         <circle ng-repeat="punto in capa.puntos"
-                                cx="{{0.15*sizeX+((punto[0] -340735.03802508) / (366468.447793805/sizeX))}}" 
-                                cy="{{(sizeY-((punto[1] - 955392.16848899)/(366468.447793805/sizeY)))}}" 
-                                r="3" 
+                                cx="{{0.155*sizeX+((punto[0] -340735.03802508) / (366468.447793805/sizeX))}}" 
+                                cy="{{(sizeY-((0.178*sizeX+(punto[1] - 955392.16848899)/(366468.447793805/sizeY))))}}" 
+                                r="3.2" 
                                 stroke="gray" 
                                 stroke-width="0" 
-                                fill="cyan" />
+                                fill="rgb({{capa.color[0]}},{{capa.color[1]}},{{capa.color[2]}})" />
                         </svg>
                         
                        
@@ -176,6 +169,16 @@
                                 style="stroke:rgb(255,0,0);stroke-width:2" />
                         </svg--->
 
+                    </div>
+                    <div class="tab-pane" id="2" style="background-color: #eee;height:{{sizeY}}px; width:{{sizeX}}px; position: relative;">
+
+                        <div ng-repeat="capa in layers">
+                            <div style="position: absolute; border:1px solid #a1a1a1;opacity: 1" ng-show="capa.estado ">
+                                <table>                       
+                                    <img  ng-href="{{capa.url}}" style="opacity: {{capa.opacidad}}"  src="{{capa.url}}" width="{{sizeX}}" height="{{sizeY}}"/>
+                                </table>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
