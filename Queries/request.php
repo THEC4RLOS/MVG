@@ -25,6 +25,7 @@ if ($func == 'getGeometryColumns') {
     $query = new query();
     $points = $query->getPoints($conn, $name);
     //print_r($points);
+    ini_set('memory_limit', '-1');
     echo json_encode($points);
     
 } else if ($func == 'connect') {

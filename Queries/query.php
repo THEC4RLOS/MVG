@@ -49,7 +49,7 @@ class query {
      */
     function getPoints($conn, $name) {
         $respuesta = array();
-
+        $registro = array();
         //obtener las geometrías x,y
         $query = "select st_asGeoJSON(geom) from $name";
         $result = pg_query($conn, $query) or die('{"status":1 , "error":"Error al obtener los puntos (Points)"}');
@@ -66,20 +66,26 @@ class query {
                 array_push($respuesta, $jsonData[0]);
                 //print_r($as[0]);
             } else {
-                foreach ($jsonData[0] as &$valor2) { // lineas MultiLineString
-                    if ($polygon == '') {
-                        array_push($respuesta, $valor2);
-                        //print_r($valor2);
-                    } else {
-                        foreach ($valor2 as &$valor3) { // poligonos MultiPolygon
-                            array_push($respuesta, $valor3);
-                            //print_r($valor3);
-                        }
-                    }
+                //foreach ($jsonData[0] as &$valor2) { // lineas MultiLineString
+                if ($polygon == '') {
+                    array_push($respuesta, $jsonData[0]);
+                    // print_r($jsonData[0]);
+                    //echo '<br>';echo '<br>';echo '<br>';echo '<br>';echo '<br>';echo '<br>';echo '<br>';echo '<br>';echo '<br>';echo '<br>';echo '<br>';
+                } else {
+                    //foreach ($valor2 as &$valor3) { // poligonos MultiPolygon
+                    array_push($respuesta, $jsonData[0][0]);
+                    //print_r($valor3);
+                    //}
                 }
+                //print_r($jsonData[0]);
+                //echo '<br>';echo '<br>';echo '<br>';echo '<br>';echo '<br>';echo '<br>';echo '<br>';echo '<br>';echo '<br>';echo '<br>';echo '<br>';
+                //}
             }
         }
+        //return null;
         return $respuesta;
+
+        //print_r($respuesta);
     }
 
 }

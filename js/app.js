@@ -15,7 +15,7 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
 
     $scope.dim = ['300x300', '500x500', '700x700', '800x800', '900x900', '1000x1000'];
     $scope.selected = '300x300';
-    $scope.dimension = 800;
+    $scope.dimension = 300;
     $scope.sizeX = $scope.dimension; //tamaño inicial de x
     $scope.sizeY = $scope.dimension; //tamaño inicial de y
     $scope.my = 0; //cantidad de peticiones de movimiento al eje y
@@ -71,6 +71,20 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
         $scope.showImgs();
     };
 
+    /**
+     * Función para seleccionar el método utilizado para dibujar la capa según su tipo
+     */
+
+    $scope.drawByType = function (layer) {
+        if (layer.tipo === "MULTIPOINT") {
+            $scope.drawInCanvasPoints(layer);
+        } else if (layer.tipo === "MULTIPOLYGON") {
+            $scope.drawInCanvasPolygon(layer);
+        } else if (layer.tipo === "MULTILINESTRING") {
+            $scope.drawInCanvasLines(layer);
+        }
+    };
+
     $scope.drawInCanvasPoints = function (layer) {
 
         if (layer.estado === true && layer.llamada === true) {
@@ -91,43 +105,51 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
             });
         }
     };
-    /**
-     * Función para seleccionar el método utilizado para dibujar la capa según su tipo
-     * @returns {undefined}
-     */
-    $scope.drawByType = function (layer) {
-        if (layer.tipo === "MULTIPOINT") {
-            $scope.drawInCanvasPoints(layer);
-        } else if (layer.tipo === "MULTIPOLYGON") {
-            $scope.drawInCanvasPolygon(layer);
+
+    $scope.drawInCanvasPolygon = function (layer) {
+        if (layer.estado === true && layer.llamada === true) {
+            layer.puntos.forEach(function (registro) {
+                var canvas = document.getElementById(layer.nombre);
+                var context = canvas.getContext('2d');
+                context.beginPath();
+                registro.forEach(function (coordenada) {
+                    var x = coordenada[0];
+                    var y = coordenada[1];
+                    x = 10 + Math.round((x - 340735.03802508) / 430.145515478705);
+                    y = Math.round((y - 955392.16848899) / 430.145515478705);
+                    y = $scope.sizeY - y;
+                    context.lineTo(x, y);
+                });
+                context.fill();
+                context.strokeStyle = "rgb(255,0,0)";
+                context.stroke();
+            });
         }
     };
 
-    $scope.drawInCanvasPolygon = function (layer) {
-
+    $scope.drawInCanvasLines = function (layer) {
+        //console.log(layer.puntos)
         if (layer.estado === true && layer.llamada === true) {
-            var canvas = document.getElementById(layer.nombre);
-            var context = canvas.getContext('2d');
-            var mover = false;
-
-            context.beginPath();
-            layer.puntos.forEach(function (coordenada) {
-                console.log('si');
-                var x = coordenada[0];
-                var y = coordenada[1];
-                x = 10 + Math.round((x - 340735.03802508) / 430.145515478705);
-                y = Math.round((y - 955392.16848899) / 430.145515478705);
-                y = $scope.sizeY - y;
-                if (mover === false) {
-                    context.moveTo(x, y);
-                    mover = true;
+            layer.puntos.forEach(function (registro) {
+                var canvas = document.getElementById(layer.nombre);
+                var context = canvas.getContext('2d');
+                
+                if (registro !== null) {
+                    context.beginPath();
+                    registro.forEach(function (coordenada) {
+                        var x = coordenada[0];
+                        var y = coordenada[1];
+                        x = 10 + Math.round((x - 340735.03802508) / 430.145515478705);
+                        y = Math.round((y - 955392.16848899) / 430.145515478705);
+                        y = $scope.sizeY - y;
+                        context.lineTo(x, y);
+                        context.moveTo(x, y);
+                    });
+                    context.fill();
+                    context.strokeStyle = "rgb(255,0,0)";
+                    context.stroke();
                 }
-                context.lineTo(x, y);
-                context.moveTo(x, y);
             });
-            context.fill();
-            context.strokeStyle = "rgb(255,0,0)";
-            context.stroke();
         }
     };
 
