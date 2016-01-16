@@ -7,26 +7,27 @@
  * and open the template in the editor.
  */
 
+set_time_limit(300); //elimitar el límite de tiempo de ejecución de la consulta
 /**
  * Description of newPHPClass
  *
  * @author 
  */
 class graficos {
-
+    
     /**
      * 
      * @param int $x : Ancho
      * @param inty $y : Alto
      * @return image : i magen resultante
      */
-    function crearImagen($x, $y, $zi, $mx, $my, $capa, $type,$conn) {
+    function crearImagen($x, $y, $zi, $mx, $my, $capa, $type, $rgb, $conn) {
         if ($type == "MULTIPOINT") {
-            return crearImagenPuntos($x, $y, $zi, $mx, $my, $capa,$conn);
+            return crearImagenPuntos($x, $y, $zi, $mx, $my, $capa,$rgb, $conn);
         } else if ($type == "MULTILINESTRING") {
-            return crearImagenLineas($x, $y, $zi, $mx, $my, $capa,$conn);
+            return crearImagenLineas($x, $y, $zi, $mx, $my, $capa,$rgb, $conn);
         } else if ($type == "MULTIPOLYGON") {
-            return crearImagenPoligono($x, $y, $zi, $mx, $my, $capa,$conn);
+            return crearImagenPoligono($x, $y, $zi, $mx, $my, $capa, $conn);
         }
     }
 
@@ -82,24 +83,18 @@ function mover($nivel, $dimension) {
  * @param type $capa nombre de la capa que solicita
  * @return type.
  */
-function crearImagenPuntos($x, $y, $zi, $mx, $my, $capa,$conn) {
+function crearImagenPuntos($x, $y, $zi, $mx, $my, $capa,$rgb, $conn) {
     $factor = 366468.447793805 / $x; //factor de division respecto a las divisiones
     $img = imagecreatetruecolor($x, $y);
-
+    //generar colores aleatorios
+    $rgb=json_decode($rgb);
+    
     $trans = imagecolorallocatealpha($img, 255, 255, 255, 127);
-    $red = imagecolorallocatealpha($img, 255, 0, 0, 63);
-    $blue = imagecolorallocatealpha($img, 0, 0, 255, 63);
-    $green = imagecolorallocatealpha($img, 52, 255, 27, 63);
+$color = imagecolorallocatealpha($img, $rgb[0], $rgb[1], $rgb[2], 1);   
+    
     imagefilltoborder($img, 0, 0, $trans, $trans);
     imagesavealpha($img, true);
-
-    if ($capa == "hospitales") {
-        $color = $red;
-        $size = 10;
-    } else {
-        $color = $green;
-        $size = 6;
-    }   
+    $size = 6;
 
     $query = "select (st_X(st_geometryN(geom,1))-283585.639702539)/$factor X,
           $x- (st_y(st_geometryN(geom,1))-889378.554139937)/$factor  Y
@@ -126,24 +121,18 @@ function crearImagenPuntos($x, $y, $zi, $mx, $my, $capa,$conn) {
  * @param type $capa nombre de la capa que solicita
  * @return type.
  */
-function crearImagenLineas($x, $y, $zi, $mx, $my, $capa,$conn) {
-    set_time_limit(300);//elimitar el límite de tiempo de ejecución de la consulta
+function crearImagenLineas($x, $y, $zi, $mx, $my, $capa, $rgb, $conn) {
+    
     $factor = 366468.447793805 / $x;
     $img = imagecreatetruecolor($x, $y);
-
+    $rgb=json_decode($rgb);
     $trans = imagecolorallocatealpha($img, 255, 255, 255, 127);
-    $red = imagecolorallocatealpha($img, 255, 0, 0, 63);
-    $blue = imagecolorallocatealpha($img, 0, 0, 255, 63);
-    $white = imagecolorallocatealpha($img, 255, 248, 246, 63);
+    $color = imagecolorallocatealpha($img, $rgb[0],$rgb[1], $rgb[2], 1);
+   
     
-    if($capa=="rios"){
-        $color = $blue;
-    }else if($capa == "caminos"){
-        $color = $white;
-    }
     imagefilltoborder($img, 0, 0, $trans, $trans);
     imagesavealpha($img, true);
-       
+
 
     $query = "select r.gid gid,
 	string_agg(CAST(((ST_X(ST_GeometryN(r.geom,1))-283585.639702539)/$factor) as varchar(100)),', ') x,
@@ -162,8 +151,8 @@ from (select ((ST_DumpPoints((ST_GeometryN(geom,1)))).geom) geom, gid
             $x1 = ajustar($arrayX[$i], $zi, $x, $mx);
             $x2 = ajustar($arrayX[$i + 1], $zi, $x, $mx);
             $y1 = ajustar($arrayY[$i], $zi, $y, $my);
-            $y2 = ajustar($arrayY[$i + 1], $zi, $y, $my);       
-            
+            $y2 = ajustar($arrayY[$i + 1], $zi, $y, $my);
+
             imageline($img, $x1, $y1, $x2, $y2, $color);
         }
     }
@@ -182,12 +171,12 @@ from (select ((ST_DumpPoints((ST_GeometryN(geom,1)))).geom) geom, gid
  * @param type $capa nombre de la capa que solicita
  * @return type.
  */
-function crearImagenPoligono($x, $y, $zi, $mx, $my, $capa,$conn) {
+function crearImagenPoligono($x, $y, $zi, $mx, $my, $capa, $conn) {
     $factor = 366468.447793805 / $x;
     $img = imagecreatetruecolor($x, $y);
 
     $green = imagecolorallocatealpha($img, 52, 255, 27, 63);
-    $fondo = imagecolorallocatealpha($img, 37, 89, 255, 28);    
+    $fondo = imagecolorallocatealpha($img, 37, 89, 255, 28);
     //889283
     $query1 = "SELECT gid, ndistrito, geom FROM $capa";
 
@@ -217,6 +206,6 @@ function crearImagenPoligono($x, $y, $zi, $mx, $my, $capa,$conn) {
         $pila = array();
         $i = 0;
     }
-    
+
     return ($img);
 }

@@ -17,6 +17,11 @@ class query {
         $query = "select f_table_schema, f_table_name, srid, type, 'false' estado, '[]' puntos, 'false' llamada from geometry_Columns where f_table_schema = '$schema'";
         $result = pg_query($conn, $query) or die('{"status":1 , "error":"Error al obtener datos de las tablas (GeometryColumns)"}');
         while ($row = pg_fetch_row($result)) {
+            //colores aleatorios
+            $r = rand(0, 255);
+            $g = rand(0, 150);
+            $b = rand(0, 200);
+            
             $geometryColumns = array(
                 "esquema" => $row[0],
                 "nombre" => $row[1],
@@ -26,7 +31,8 @@ class query {
                 "puntos" => json_decode($row[5]),
                 "llamada" => json_decode($row[6]), // si ya se hizo la llamada para obtener los puntos
                 "opacidad" => 1,
-                "actualizar" => false
+                "actualizar" => false,
+                "color" => json_encode(array($r,$g,$b))
             );
             array_push($respuesta, $geometryColumns);
         }
@@ -55,7 +61,7 @@ class query {
             $lines = strrpos($valor['st_asgeojson'], 'MultiLineString', 0);
             $polygon = strrpos($valor['st_asgeojson'], 'MultiPolygon', 0);
             $jsonData = json_decode($data);
-            
+
             if ($polygon == '' and $lines == '') {
                 array_push($respuesta, $jsonData[0]);
                 //print_r($as[0]);
@@ -75,5 +81,5 @@ class query {
         }
         return $respuesta;
     }
-    
+
 }

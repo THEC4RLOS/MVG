@@ -45,9 +45,10 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
             if ($scope.layers[i].estado === true) {
                 console.log("hola");
                 var conn = 'host=' + $scope.host + '%20port=' + $scope.port + '%20dbname=' + $scope.db + '%20user=' + $scope.user + '%20password=' + $scope.pass;
-                var fun = "Imgs/imagen.php?x=" + $scope.sizeX + "&y=" + $scope.sizeY + "&zi=" + $scope.zi + "&mx=" + $scope.mx + "&my=" + $scope.my + "&capa=" + $scope.layers[i].nombre + "&tipo=" + $scope.layers[i].tipo;
+                var fun = "Imgs/imagen.php?x=" + $scope.sizeX + "&y=" + $scope.sizeY + "&zi=" + $scope.zi + "&mx=" + $scope.mx + "&my=" + $scope.my + "&capa=" + $scope.layers[i].nombre + "&tipo=" + $scope.layers[i].tipo+"&rgb="+$scope.layers[i].color;
                 var url = fun + "&conn=" + conn;
                 $scope.layers[i].url = url;
+                
             }
         }
 
@@ -182,15 +183,17 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
 
     ////----------------------------------------------sección para las imgs
     $scope.showImgs = function () {
-
+        
         for (i = 0; i < $scope.layers.length; i++) {
-
+            
             if ($scope.layers[i].estado === true) {
                 var conn = 'host=' + $scope.host + '%20port=' + $scope.port + '%20dbname=' + $scope.db + '%20user=' + $scope.user + '%20password=' + $scope.pass;
-                var fun = "Imgs/imagen.php?x=" + $scope.sizeX + "&y=" + $scope.sizeY + "&zi=" + $scope.zi + "&mx=" + $scope.mx + "&my=" + $scope.my + "&capa=" + $scope.layers[i].nombre + "&tipo=" + $scope.layers[i].tipo;
+                var fun = "Imgs/imagen.php?x=" + $scope.sizeX + "&y=" + $scope.sizeY + "&zi=" + $scope.zi + "&mx=" + $scope.mx + 
+                    "&my=" + $scope.my + "&capa=" + $scope.layers[i].nombre + "&tipo=" + $scope.layers[i].tipo+"&rgb="+$scope.layers[i].color;
                 var url = fun + "&conn=" + conn;
                 $scope.layers[i].url = url;
-
+                console.log($scope.layers[i].url);
+                console.log($scope.layers[i].color);
             }
         }
     };
@@ -202,7 +205,7 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
      */
     $scope.controlarVisualizacion = function (layer) {
         var id = $scope.layers.indexOf(layer);
-
+        
         if ($scope.layers[id].estado === false) {
             $scope.layers[id].estado = true;
             var conn = 'host=' + $scope.host + '%20port=' + $scope.port + '%20dbname=' + $scope.db + '%20user=' + $scope.user + '%20password=' + $scope.pass;
@@ -210,14 +213,16 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
             if ($scope.layers[id].url === "") {
                 //mostrar la capa requerida                       
 
-                var fun = "Imgs/imagen.php?x=" + $scope.sizeX + "&y=" + $scope.sizeY + "&zi=" + $scope.zi + "&mx=" + $scope.mx + "&my=" + $scope.my + "&capa=" + $scope.layers[i].nombre + "&tipo=" + $scope.layers[i].tipo;
+                var fun = "Imgs/imagen.php?x=" + $scope.sizeX + "&y=" + $scope.sizeY + "&zi=" + $scope.zi +
+                        "&mx=" + $scope.mx + "&my=" + $scope.my + "&capa=" + $scope.layers[i].nombre + "&tipo=" + $scope.layers[i].tipo+"&rgb="+$scope.layers[i].color;
                 var url = fun + "&conn=" + conn;
                 $scope.layers[id].url = url;
-                console.log($scope.layers[id].url);
+                
             } else if ($scope.layers[id].actualizar === true) {
                 console.log($scope.layers[id].url);
                 $scope.layers[id].actualizar = false;
-                var fun = "Imgs/imagen.php?x=" + $scope.sizeX + "&y=" + $scope.sizeY + "&zi=" + $scope.zi + "&mx=" + $scope.mx + "&my=" + $scope.my + "&capa=" + $scope.layers[i].nombre + "&tipo=" + $scope.layers[i].tipo;
+                var fun = "Imgs/imagen.php?x=" + $scope.sizeX + "&y=" + $scope.sizeY + "&zi=" + $scope.zi +
+                    "&mx=" + $scope.mx + "&my=" + $scope.my + "&capa=" + $scope.layers[i].nombre + "&tipo=" + $scope.layers[i].tipo+"&rgb="+$scope.layers[i].color;
                 var url = fun + "&conn=" + conn;
                 $scope.layers[id].url = url;
             }
@@ -316,7 +321,8 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
         for (i = 0; i < $scope.layers.length; i++) {
             if ($scope.layers[i].estado === true) {
                 var conn = 'host=' + $scope.host + '%20port=' + $scope.port + '%20dbname=' + $scope.db + '%20user=' + $scope.user + '%20password=' + $scope.pass;
-                var fun = "Imgs/imagen.php?x=" + $scope.sizeX + "&y=" + $scope.sizeY + "&zi=" + $scope.zi + "&mx=" + $scope.mx + "&my=" + $scope.my + "&capa=" + $scope.layers[i].nombre + "&tipo=" + $scope.layers[i].tipo;
+                var fun = "Imgs/imagen.php?x=" + $scope.sizeX + "&y=" + $scope.sizeY + "&zi=" + $scope.zi +
+                    "&mx=" + $scope.mx + "&my=" + $scope.my + "&capa=" + $scope.layers[i].nombre + "&tipo=" + $scope.layers[i].tipo+"&rgb="+$scope.layers[i].color;
                 var url = fun + "&conn=" + conn;
                 $scope.layers[i].url = url;
 
@@ -347,7 +353,8 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
         for (i = 0; i < $scope.layers.length; i++) {
             if ($scope.layers[i].estado === true) {
                 var conn = 'host=' + $scope.host + '%20port=' + $scope.port + '%20dbname=' + $scope.db + '%20user=' + $scope.user + '%20password=' + $scope.pass;
-                var fun = "Imgs/imagen.php?x=" + $scope.sizeX + "&y=" + $scope.sizeY + "&zi=" + $scope.zi + "&mx=" + $scope.mx + "&my=" + $scope.my + "&capa=" + $scope.layers[i].nombre + "&tipo=" + $scope.layers[i].tipo;
+                var fun = "Imgs/imagen.php?x=" + $scope.sizeX + "&y=" + $scope.sizeY + "&zi=" + $scope.zi +
+                    "&mx=" + $scope.mx + "&my=" + $scope.my + "&capa=" + $scope.layers[i].nombre + "&tipo=" + $scope.layers[i].tipo+"&rgb="+$scope.layers[i].color;
                 var url = fun + "&conn=" + conn;
                 $scope.layers[i].url = url;
             } else {
@@ -374,7 +381,8 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
             //el tamaño de la imagen de acuerdo a las dimesiones
             if ($scope.layers[i].estado === true) {
                 var conn = 'host=' + $scope.host + '%20port=' + $scope.port + '%20dbname=' + $scope.db + '%20user=' + $scope.user + '%20password=' + $scope.pass;
-                var fun = "Imgs/imagen.php?x=" + $scope.sizeX + "&y=" + $scope.sizeY + "&zi=" + $scope.zi + "&mx=" + $scope.mx + "&my=" + $scope.my + "&capa=" + $scope.layers[i].nombre + "&tipo=" + $scope.layers[i].tipo;
+                var fun = "Imgs/imagen.php?x=" + $scope.sizeX + "&y=" + $scope.sizeY + "&zi=" + $scope.zi +
+                    "&mx=" + $scope.mx + "&my=" + $scope.my + "&capa=" + $scope.layers[i].nombre + "&tipo=" + $scope.layers[i].tipo+"&rgb="+$scope.layers[i].color;
                 var url = fun + "&conn=" + conn;
                 $scope.layers[i].url = url;
             }
