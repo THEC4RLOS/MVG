@@ -153,7 +153,7 @@
                                 <table>
                                     <tr>
                                         <td>                                            
-                                            <svg  style=" width: {{sizeX}}px; height: {{sizeY}}px; border:1px solid #a1a1a1;opacity: 1    ">
+                                            <svg  style=" width: {{sizeX}}px; height: {{sizeY}}px; border:1px solid #a1a1a1;opacity: {{capa.opacidad}}   ">
                                             <circle ng-repeat="punto in capa.puntos"
                                                     cx="{{0.155*sizeX+((punto[0] -340735.03802508) / (366468.447793805/sizeX))}}" 
                                                     cy="{{(sizeY-((0.178*sizeX+(punto[1] - 955392.16848899)/(366468.447793805/sizeY))))}}" 
