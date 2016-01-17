@@ -51,7 +51,7 @@ class query {
         $respuesta = array();
         $registro = array();
         //obtener las geometrías x,y
-        $query = "select st_asGeoJSON(geom) from $name";
+        $query = "select st_asGEOJSON(geom) from $name";
         $result = pg_query($conn, $query) or die('{"status":1 , "error":"Error al obtener los puntos (Points)"}');
         $row = pg_fetch_all($result);
 

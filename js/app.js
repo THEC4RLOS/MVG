@@ -23,6 +23,7 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
     $scope.mx = 0; //cantidad de peticiones de movimiento al eje x
     $scope.zi = 0; //cantidad de peticiones al zoom
     $scope.imgUrl = "";
+    $scope.lineLayers = Array();
 
     $scope.layers = [];
     $scope.update = function () {
@@ -134,7 +135,9 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
     };
 
     $scope.drawInCanvasLines = function (layer) {
-        //console.log(layer.puntos)
+        //console.log(layer);
+       $scope.fillLineLayers(layer);
+        
         if (layer.estado === true && layer.llamada === true) {
             layer.puntos.forEach(function (registro) {
                 var canvas = document.getElementById(layer.nombre);
@@ -142,21 +145,42 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
 
                 if (registro !== null) {
                     context.beginPath();
+                    
                     registro.forEach(function (coordenada) {
                         var x = coordenada[0];
                         var y = coordenada[1];
-                        x = $scope.sizeY*0.155+ Math.round((x - 340735.03802508) / (366468.447793805/$scope.sizeY));
-                        y = $scope.sizeY*0.178 +Math.round((y - 955392.16848899) / (366468.447793805/$scope.sizeY));
+
+                        x = $scope.sizeX * 0.155 + Math.round((x - 340735.03802508) / (366468.447793805 / $scope.sizeY));
+                        y = $scope.sizeY * 0.178 + Math.round((y - 955392.16848899) / (366468.447793805 / $scope.sizeY));
                         y = $scope.sizeY - y;
+                        
+
                         context.lineTo(x, y);
                         context.moveTo(x, y);
+                 
                     });
+                    j=0;
                     context.fill();
                     context.strokeStyle = "rgb(255,0,0)";
                     context.stroke();
                 }
             });
         }
+    };
+    
+    $scope.fillLineLayers= function(layer){
+      for(i=0; i<layer.puntos.length;i++){
+          
+          for(j=0;j<layer.puntos[i].length-1;j++){                              
+              var linea = {
+                  "x1":layer.puntos[i][j][0],
+                  "x2":layer.puntos[i][j+1][0],
+                  "y1":layer.puntos[i][j][1],
+                  "y2":layer.puntos[i][j+1][1]
+              };
+              $scope.lineLayers.push(linea);
+          }
+      }  
     };
 
     $scope.getGeometryColumns = function () {

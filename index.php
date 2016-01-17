@@ -56,6 +56,13 @@
             </nav>
         </div> <!-- /.Nav Bar -->
 
+<!--        <div ng-repeat="line1 in lineLayers">
+            x1={{line1.x1}}
+            y1={{line1.y1}}
+            x2={{line1.x2}}
+            y2={{line1.y2}}
+        </div>-->
+        
         <div class="pull-left" style="width: 15.4%; height: 100%; background-color: #d5d5d5"> <!-- Controles y herramientas -->
             <div style="padding: 1%;">
                 <table>
@@ -129,7 +136,7 @@
                     </li>
                     
                 </ul>
-
+                
                 <div class="tab-content">
                     <div class="tab-pane active" id="1" style="background-color: #eee;height:{{sizeY}}px; width:{{sizeX}}px; position: relative;">
                         <div ng-repeat="capa in layers">
@@ -145,43 +152,34 @@
                             </div>
                         </div>
                     </div>
-       
+                     
                     <div  class="tab-pane" id="3" style="background-color: #eee;height:{{sizeY}}px; width:{{sizeX}}px; position: absolute;">
                         <div ng-repeat="capa in layers">
-
                             <div style="position: absolute" ng-show="capa.estado">
                                 <table>
                                     <tr>
                                         <td>                                            
                                             <svg  style=" width: {{sizeX}}px; height: {{sizeY}}px; border:1px solid #a1a1a1;opacity: {{capa.opacidad}}   ">
-                                            <circle ng-repeat="punto in capa.puntos"
+<!--                                            <circle ng-repeat="punto in capa.puntos"
                                                     cx="{{0.155*sizeX+((punto[0] -340735.03802508) / (366468.447793805/sizeX))}}" 
                                                     cy="{{(sizeY-((0.178*sizeX+(punto[1] - 955392.16848899)/(366468.447793805/sizeY))))}}" 
                                                     r="3.2" 
                                                     stroke="gray" 
                                                     stroke-width="0" 
-                                                    fill="rgb({{capa.color[0]}},{{capa.color[1]}},{{capa.color[2]}})" />
+                                                    fill="rgb({{capa.color[0]}},{{capa.color[1]}},{{capa.color[2]}})" />                                        -->
+                                            <line ng-repeat="line1 in lineLayers"                                                  
+                                                  x1="{{sizeX * 0.155 + ((line1.x1-340735.03802508) / (366468.447793805/sizeX))}}"
+                                                  y1="{{sizeY - (sizeY * 0.178 +(line1.y1- 955392.16848899) / (366468.447793805/sizeX))}}"
+                                                  x2="{{sizeY * 0.155 + ((line1.x2-340735.03802508) / (366468.447793805/sizeX))}}"
+                                                  y2="{{sizeY -(sizeY * 0.178 +(line1.y2- 955392.16848899)/(366468.447793805/sizeY))}}"
+                                                  style="stroke:rgb(255,0,0);stroke-width:1" />                                                                                           
                                             </svg>
                                         </td>
                                     </tr>
                                 </table>
                             </div>
-                        </div>
-                       
-                        
-                       
-                        
-                        <!--svg  width="640" height="480" 
-                              style="border: 1px solid forestgreen ; position: absolute; padding: 40px">
-                        <line
-                                x1="10" 
-                                y1="10" 
-                                x2="20" 
-                                y2="20" 
-                                style="stroke:rgb(255,0,0);stroke-width:2" />
-                        </svg--->
-
-                    </div>
+                        </div>                  
+                    </div >
                     <div class="tab-pane" id="2" style="background-color: #eee;height:{{sizeY}}px; width:{{sizeX}}px; position: relative;">
 
                         <div ng-repeat="capa in layers">
