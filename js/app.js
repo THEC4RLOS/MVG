@@ -117,52 +117,40 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
     $scope.drawInCanvasLines = function (layer) {
         //console.log(layer);
        layer.color = JSON.parse(layer.color);
-        
+       layer.polyLines = Array();
         if (layer.estado === true && layer.llamada === true) {
-            var registro = Array();
+            
             var canvas = document.getElementById(layer.nombre);
             var context = canvas.getContext('2d');
             for (i = 0; i < layer.puntos.length; i++) {
-
+                var strPolyLine = "";
                 if (layer.puntos[i] !== null) {
                     context.beginPath();
 
-                    for (j = 0; j < layer.puntos[i].length - 1; j++) {
-                        if (j === layer.puntos[i].length - 2) {
-                            var x = layer.puntos[i][j + 1][0];
-                            var y = layer.puntos[i][j + 1][1];
-                        }
-                        
-                       //crear la capa de líneas en svg
-                        var linea = {
-                            "x1": layer.puntos[i][j][0],
-                            "x2": layer.puntos[i][j + 1][0],
-                            "y1": layer.puntos[i][j][1],
-                            "y2": layer.puntos[i][j + 1][1]
-                        };
-                        
+                    for (j = 0; j < layer.puntos[i].length; j++) {                                                                                             
                         //arreglo con las líneas necesarias para dibujar la capa en svg
-                        registro.push(linea);
+                        //registro.push(linea);
                         
                         var x = layer.puntos[i][j][0];
                         var y = layer.puntos[i][j][1];
+                        //crear la capa de líneas en svg
+                        
                         x = Math.round((x - 283585.639702539) / (366468.447793805 / $scope.sizeY));
                         y = Math.round((y - 889378.554139937) / (366468.447793805 / $scope.sizeY));
                         y = $scope.sizeY - y;
+                        strPolyLine+=x+","+y+" ";                        
+                       context.lineTo(x, y);
+                       context.moveTo(x, y);
 
-
-                        context.lineTo(x, y);
-                        context.moveTo(x, y);
-
-                    }                    
+                    }
+                    layer.polyLines.push(strPolyLine);                    
                     context.fill();                    
                     context.strokeStyle = "rgb(" + layer.color[0] + "," + layer.color[1] + "," + layer.color[2] + ")";
                     context.stroke();
                 }
             }
-            layer.lineas = registro;                        
-            layer.rgb=layer.color[0]+", "+layer.color[1]+", "+layer.color[2];
-            console.log(layer.rgb);
+           
+            layer.rgb=layer.color[0]+", "+layer.color[1]+", "+layer.color[2];            
         }
     };       
 
