@@ -64,8 +64,8 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
                 myService.async(layer.nombre, conn).then(function (data) {
                     $scope.data = data;
                     layer.puntos = data;
-                    console.log('data:', $scope.data);
-                    $scope.drawByType(layer);
+                    //console.log('data:', $scope.data);
+                    $scope.drawByType(layer, 0, 0);
 
                     $scope.SVGLayers.push(layer);
                 });
@@ -75,33 +75,43 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
         $scope.showImgs();
     };
 
+    $scope.canvasMov = function (newx, newy) {
+
+        $scope.layers.forEach(function (layer) {
+            $scope.drawByType(layer, newx, newy);
+        });
+    };
+
     /**
      * Función para seleccionar el método utilizado para dibujar la capa según su tipo
      */
 
-    $scope.drawByType = function (layer) {
+    $scope.drawByType = function (layer, newx, newy) {
         if (layer.tipo === "MULTIPOINT") {
-            $scope.drawInCanvasPoints(layer);
+            $scope.drawInCanvasPoints(layer, newx, newy);
         } else if (layer.tipo === "MULTIPOLYGON") {
-            $scope.drawInCanvasPolygon(layer);
+            $scope.drawInCanvasPolygon(layer, newx, newy);
         } else if (layer.tipo === "MULTILINESTRING") {
-            $scope.drawInCanvasLines(layer);
+            $scope.drawInCanvasLines(layer, newx, newy);
         }
     };
 
-    $scope.drawInCanvasPoints = function (layer) {
-
+    $scope.drawInCanvasPoints = function (layer, newx, newy) {
         if (layer.estado === true && layer.llamada === true) {
             var canvas = document.getElementById(layer.nombre);
             var context = canvas.getContext('2d');
+            context.clearRect(0, 0, $scope.sizeX, $scope.sizeY);
             layer.color = JSON.parse(layer.color);
 
             layer.puntos.forEach(function (coordenada) {
-                var x = coordenada[0];
-                var y = coordenada[1];
+                var x = (coordenada[0]);
+                var y = (coordenada[1]);
+
                 x = Math.round((x - 283585.639702539) / (366468.447793805 / $scope.sizeY));
-                y =  Math.round((y - 889378.554139937) / (366468.447793805 / $scope.sizeY));
+                y = Math.round((y - 889378.554139937) / (366468.447793805 / $scope.sizeY));
+                x = x + ((x * 0.1) * newx);
                 y = $scope.sizeY - y;
+                y = y + ((y * 0.1) * newy);
                 context.beginPath();
                 context.arc(x, y, 3, 0, 2 * Math.PI);
                 context.fill();
@@ -112,9 +122,9 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
             });
         }
     };
-  
 
-    $scope.drawInCanvasLines = function (layer) {
+
+    $scope.drawInCanvasLines = function (layer, newx, newy) {
         //console.log(layer);
        layer.color = JSON.parse(layer.color);
        layer.polyLines = Array();
@@ -122,6 +132,7 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
             
             var canvas = document.getElementById(layer.nombre);
             var context = canvas.getContext('2d');
+            context.clearRect(0, 0, $scope.sizeX, $scope.sizeY);
             for (i = 0; i < layer.puntos.length; i++) {
                 var strPolyLine = "";
                 if (layer.puntos[i] !== null) {
@@ -130,13 +141,14 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
                     for (j = 0; j < layer.puntos[i].length; j++) {                                                                                             
                         //arreglo con las líneas necesarias para dibujar la capa en svg
                         //registro.push(linea);
-                        
+
                         var x = layer.puntos[i][j][0];
                         var y = layer.puntos[i][j][1];
                         //crear la capa de líneas en svg
                         
                         x = Math.round((x - 283585.639702539) / (366468.447793805 / $scope.sizeY));
                         y = Math.round((y - 889378.554139937) / (366468.447793805 / $scope.sizeY));
+                        x = x + (x*0.1)*newx;
                         y = $scope.sizeY - y;
                         strPolyLine+=x+","+y+" ";                        
                        context.lineTo(x, y);
@@ -152,7 +164,29 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
            
             layer.rgb=layer.color[0]+", "+layer.color[1]+", "+layer.color[2];            
         }
-    };       
+    };
+
+    $scope.drawInCanvasPolygon = function (layer) {
+        if (layer.estado === true && layer.llamada === true) {
+            layer.puntos.forEach(function (registro) {
+                var canvas = document.getElementById(layer.nombre);
+                var context = canvas.getContext('2d');
+                context.clearRect(0, 0, $scope.sizeX, $scope.sizeY);
+                context.beginPath();
+                registro.forEach(function (coordenada) {
+                    var x = coordenada[0];
+                    var y = coordenada[1];
+                    x = 10 + Math.round((x - 340735.03802508) / 430.145515478705);
+                    y = Math.round((y - 955392.16848899) / 430.145515478705);
+                    y = $scope.sizeY - y;
+                    context.lineTo(x, y);
+                });
+                context.fill();
+                context.strokeStyle = "rgb(255,0,0)";
+                context.stroke();
+            });
+        }
+    };
 
     $scope.getGeometryColumns = function () {
         // Accion del boton Base de Datos
@@ -307,8 +341,7 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
         if (ind === 1 && $scope.layers[id].opacidad > 0) {
             $scope.layers[id].opacidad -= 0.1;
             //$scope.layers[id].url = "Imgs/imagen.php?x=" + $scope.sizeX + "&y=" + $scope.sizeY + "&zi=" + $scope.zi + "&mx=" + $scope.mx + "&my=" + $scope.my + "&capa=" + $scope.layers[id].nombre + "&tipo=" + $scope.layers[id].tipo;
-        }
-        else {
+        } else {
             if ($scope.layers[id].opacidad < 1) {
                 $scope.layers[id].opacidad += 0.1;
             }
@@ -327,20 +360,24 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
         // lo que da el efecto de que el visor se mueve hacia arriba
         if (ind === 0) {
             $scope.my += 1;
+            $scope.canvasMov(0, 1);
         }
         // realicar el movimiento de la imagen hacia arriba
         else if (ind === 1)
         {
             $scope.my -= 1;
+            $scope.canvasMov(0, -1);
         }
 
         //izquierda
         else if (ind === 3) {
             $scope.mx += 1;
+            $scope.canvasMov(1, 0);
         }
         //derecha
         else if (ind === 4) {
             $scope.mx -= 1;
+            $scope.canvasMov(-1, 0);
         }
         for (i = 0; i < $scope.layers.length; i++) {
             if ($scope.layers[i].estado === true) {
