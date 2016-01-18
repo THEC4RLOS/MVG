@@ -32,7 +32,8 @@ class query {
                 "llamada" => json_decode($row[6]), // si ya se hizo la llamada para obtener los puntos
                 "opacidad" => 1,
                 "actualizar" => false,
-                "color" => json_encode(array($r,$g,$b))
+                "color" => json_encode(array($r,$g,$b)),
+                "lineas" => array()
             );
             array_push($respuesta, $geometryColumns);
         }
@@ -51,7 +52,7 @@ class query {
         $respuesta = array();
         $registro = array();
         //obtener las geometrías x,y
-        $query = "select st_asGEOJSON(geom) from $name";
+        $query = "select st_asGEOJSON(geom) from $name limit 100";
         $result = pg_query($conn, $query) or die('{"status":1 , "error":"Error al obtener los puntos (Points)"}');
         $row = pg_fetch_all($result);
 

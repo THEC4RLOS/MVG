@@ -99,8 +99,8 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
             layer.puntos.forEach(function (coordenada) {
                 var x = coordenada[0];
                 var y = coordenada[1];
-                x = $scope.sizeY * 0.155 + Math.round((x - 340735.03802508) / (366468.447793805 / $scope.sizeY));
-                y = $scope.sizeY * 0.178 + Math.round((y - 955392.16848899) / (366468.447793805 / $scope.sizeY));
+                x = Math.round((x - 283585.639702539) / (366468.447793805 / $scope.sizeY));
+                y =  Math.round((y - 889378.554139937) / (366468.447793805 / $scope.sizeY));
                 y = $scope.sizeY - y;
                 context.beginPath();
                 context.arc(x, y, 3, 0, 2 * Math.PI);
@@ -112,76 +112,59 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
             });
         }
     };
-
-    $scope.drawInCanvasPolygon = function (layer) {
-        if (layer.estado === true && layer.llamada === true) {
-            layer.puntos.forEach(function (registro) {
-                var canvas = document.getElementById(layer.nombre);
-                var context = canvas.getContext('2d');
-                context.beginPath();
-                registro.forEach(function (coordenada) {
-                    var x = coordenada[0];
-                    var y = coordenada[1];
-                    x = $scope.sizeY * 0.155 + Math.round((x - 340735.03802508) / (366468.447793805 / $scope.sizeY));
-                    y = $scope.sizeY * 0.178 + Math.round((y - 955392.16848899) / (366468.447793805 / $scope.sizeY));
-                    y = $scope.sizeY - y;
-                    context.lineTo(x, y);
-                });
-                context.fill();
-                context.strokeStyle = "rgb(255,0,0)";
-                context.stroke();
-            });
-        }
-    };
+  
 
     $scope.drawInCanvasLines = function (layer) {
         //console.log(layer);
-       $scope.fillLineLayers(layer);
+       layer.color = JSON.parse(layer.color);
         
         if (layer.estado === true && layer.llamada === true) {
-            layer.puntos.forEach(function (registro) {
-                var canvas = document.getElementById(layer.nombre);
-                var context = canvas.getContext('2d');
+            var registro = Array();
+            var canvas = document.getElementById(layer.nombre);
+            var context = canvas.getContext('2d');
+            for (i = 0; i < layer.puntos.length; i++) {
 
-                if (registro !== null) {
+                if (layer.puntos[i] !== null) {
                     context.beginPath();
-                    
-                    registro.forEach(function (coordenada) {
-                        var x = coordenada[0];
-                        var y = coordenada[1];
 
-                        x = $scope.sizeX * 0.155 + Math.round((x - 340735.03802508) / (366468.447793805 / $scope.sizeY));
-                        y = $scope.sizeY * 0.178 + Math.round((y - 955392.16848899) / (366468.447793805 / $scope.sizeY));
-                        y = $scope.sizeY - y;
+                    for (j = 0; j < layer.puntos[i].length - 1; j++) {
+                        if (j === layer.puntos[i].length - 2) {
+                            var x = layer.puntos[i][j + 1][0];
+                            var y = layer.puntos[i][j + 1][1];
+                        }
                         
+                       //crear la capa de líneas en svg
+                        var linea = {
+                            "x1": layer.puntos[i][j][0],
+                            "x2": layer.puntos[i][j + 1][0],
+                            "y1": layer.puntos[i][j][1],
+                            "y2": layer.puntos[i][j + 1][1]
+                        };
+                        
+                        //arreglo con las líneas necesarias para dibujar la capa en svg
+                        registro.push(linea);
+                        
+                        var x = layer.puntos[i][j][0];
+                        var y = layer.puntos[i][j][1];
+                        x = Math.round((x - 283585.639702539) / (366468.447793805 / $scope.sizeY));
+                        y = Math.round((y - 889378.554139937) / (366468.447793805 / $scope.sizeY));
+                        y = $scope.sizeY - y;
+
 
                         context.lineTo(x, y);
                         context.moveTo(x, y);
-                 
-                    });
-                    j=0;
-                    context.fill();
-                    context.strokeStyle = "rgb(255,0,0)";
+
+                    }                    
+                    context.fill();                    
+                    context.strokeStyle = "rgb(" + layer.color[0] + "," + layer.color[1] + "," + layer.color[2] + ")";
                     context.stroke();
                 }
-            });
+            }
+            layer.lineas = registro;                        
+            layer.rgb=layer.color[0]+", "+layer.color[1]+", "+layer.color[2];
+            console.log(layer.rgb);
         }
-    };
-    
-    $scope.fillLineLayers= function(layer){
-      for(i=0; i<layer.puntos.length;i++){
-          
-          for(j=0;j<layer.puntos[i].length-1;j++){                              
-              var linea = {
-                  "x1":layer.puntos[i][j][0],
-                  "x2":layer.puntos[i][j+1][0],
-                  "y1":layer.puntos[i][j][1],
-                  "y2":layer.puntos[i][j+1][1]
-              };
-              $scope.lineLayers.push(linea);
-          }
-      }  
-    };
+    };       
 
     $scope.getGeometryColumns = function () {
         // Accion del boton Base de Datos

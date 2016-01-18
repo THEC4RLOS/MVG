@@ -128,7 +128,7 @@ function crearImagenLineas($x, $y, $zi, $mx, $my, $capa, $rgb, $conn) {
     $img = imagecreatetruecolor($x, $y);
     $rgb=json_decode($rgb);
     $trans = imagecolorallocatealpha($img, 255, 255, 255, 127);
-    $color = imagecolorallocatealpha($img, $rgb[0],$rgb[1], $rgb[2], 1);
+    $color = imagecolorallocatealpha($img, $rgb[0], $rgb[1], $rgb[2], 1);   
    
     
     imagefilltoborder($img, 0, 0, $trans, $trans);

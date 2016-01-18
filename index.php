@@ -47,7 +47,9 @@
                                 </a>
                             </li>
                         </ul>
-
+<!--                        <div ng-repeat="capa in layers">
+                            {{capa.color[0]}},{{capa.color[1]}},{{capa.color[2]}}
+                        </div>-->
                         <ul class="nav navbar-nav navbar-right">
                             <li><a ng-click="goFullscreen()" title="Fullscreen" class="glyphicon glyphicon-fullscreen" href="#"></a></li>
                         </ul>
@@ -160,19 +162,19 @@
                                     <tr>
                                         <td>                                            
                                             <svg  style=" width: {{sizeX}}px; height: {{sizeY}}px; border:1px solid #a1a1a1;opacity: {{capa.opacidad}}   ">
-<!--                                            <circle ng-repeat="punto in capa.puntos"
-                                                    cx="{{0.155*sizeX+((punto[0] -340735.03802508) / (366468.447793805/sizeX))}}" 
-                                                    cy="{{(sizeY-((0.178*sizeX+(punto[1] - 955392.16848899)/(366468.447793805/sizeY))))}}" 
+                                            <circle ng-repeat="punto in capa.puntos"
+                                                    cx="{{((punto[0]-283585.639702539) / (366468.447793805/sizeX))}}" 
+                                                    cy="{{(sizeY-(((punto[1] - 889378.554139937)/(366468.447793805/sizeY))))}}" 
                                                     r="3.2" 
                                                     stroke="gray" 
                                                     stroke-width="0" 
-                                                    fill="rgb({{capa.color[0]}},{{capa.color[1]}},{{capa.color[2]}})" />                                        -->
-                                            <line ng-repeat="line1 in lineLayers"                                                  
-                                                  x1="{{sizeX * 0.155 + ((line1.x1-340735.03802508) / (366468.447793805/sizeX))}}"
-                                                  y1="{{sizeY - (sizeY * 0.178 +(line1.y1- 955392.16848899) / (366468.447793805/sizeX))}}"
-                                                  x2="{{sizeY * 0.155 + ((line1.x2-340735.03802508) / (366468.447793805/sizeX))}}"
-                                                  y2="{{sizeY -(sizeY * 0.178 +(line1.y2- 955392.16848899)/(366468.447793805/sizeY))}}"
-                                                  style="stroke:rgb(255,0,0);stroke-width:1" />                                                                                           
+                                                    fill="rgb({{capa.color[0]}},{{capa.color[1]}},{{capa.color[2]}})" />                                        
+                                            <line ng-repeat="line1 in capa.lineas"                                                  
+                                                  x1="{{((line1.x1-283585.639702539) / (366468.447793805/sizeX))}}"
+                                                  y1="{{(sizeY-(((line1.y1 - 889378.554139937)/(366468.447793805/sizeY))))}}"
+                                                  x2="{{((line1.x2-283585.639702539) / (366468.447793805/sizeX))}}"
+                                                  y2="{{(sizeY-(((line1.y2 - 889378.554139937)/(366468.447793805/sizeY))))}}"
+                                                  style="stroke:rgb({{capa.rgb}});stroke-width:2" />                                                                                           
                                             </svg>
                                         </td>
                                     </tr>
