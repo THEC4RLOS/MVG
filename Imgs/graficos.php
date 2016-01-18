@@ -25,7 +25,7 @@ class graficos {
         if ($type == "MULTIPOINT") {
             return crearImagenPuntos($x, $y, $zi, $mx, $my, $capa,$rgb, $conn);
         } else if ($type == "MULTILINESTRING") {
-            $rgb =substr($rgb, 1,-1);
+            //$rgb =substr($rgb, 1,-1);
             return crearImagenLineas($x, $y, $zi, $mx, $my, $capa,$rgb, $conn);
         } else if ($type == "MULTIPOLYGON") {            
             return crearImagenPoligono($x, $y, $zi, $mx, $my, $capa, $conn);
