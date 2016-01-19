@@ -65,14 +65,14 @@
             y2={{line1.y2}}
         </div>-->
         
-        <div class="pull-left" style="width: 15.4%; height: 100%; background-color: #d5d5d5"> <!-- Controles y herramientas -->
-            <div style="padding: 1%;">
+        <div class="pull-left" style="width: 21%; height: 100%; background-color: #E7E7E7; padding: 1%;"> <!-- Controles y herramientas -->
+            <div>
                 <table>
                     <tr ng-repeat="capa in layers|orderBy:'prioridad':true">
                         <td ng-show="capa.llamada">
                             <h1 class="label label-default"  >{{capa.nombre}}</h1>
                         </td>
-                        <td style="padding-left: 10px; padding-bottom: 50px" ng-show="capa.llamada">
+                        <td style="padding-left: 10px; padding-bottom: 2px" ng-show="capa.llamada">
 
                             <a href="#" class="btn-sm btn-default  glyphicon glyphicon-arrow-up" ng-click="bajar(capa)"></a>                        
                             <a class="btn btn-default btn-sm" ng-click="aumentarTransparencia(capa, 0)">tr-</a>                            
@@ -123,7 +123,7 @@
             </div>
         </div>  <!-- /.Controles y herramientas -->
 
-        <div class="pull-right" style="width: 84.5%; height: 110px; background-color: white"> <!-- visualizacion de las capas -->
+        <div class="pull-right" style="width: 78.9%; background-color: white"> <!-- visualizacion de las capas -->
 
             <div id="exTab2" class="">	
                 <ul class="nav nav-tabs">
@@ -140,7 +140,7 @@
                 </ul>
                 
                 <div class="tab-content">
-                    <div class="tab-pane active" id="1" style="background-color: #eee;height:{{sizeY}}px; width:{{sizeX}}px; position: relative;">
+                    <div class="tab-pane active" id="1" style="background-color: #E7E7E7;height:{{sizeY}}px; width:{{sizeX}}px; position: relative;">
                         <div ng-repeat="capa in layers">
                             
                             <div style="position: absolute" ng-show="capa.estado">
@@ -155,7 +155,7 @@
                         </div>
                     </div>
                      
-                    <div  class="tab-pane" id="3" style="background-color: #eee;height:{{sizeY}}px; width:{{sizeX}}px; position: absolute;">
+                    <div  class="tab-pane" id="3" style="background-color: #E7E7E7;height:{{sizeY}}px; width:{{sizeX}}px; position: absolute;">
                         <div ng-repeat="capa in layers">
                             <div style="position: absolute" ng-show="capa.estado">
                                 <table>
@@ -184,7 +184,7 @@
                             </div>
                         </div>                  
                     </div >
-                    <div class="tab-pane" id="2" style="background-color: #eee;height:{{sizeY}}px; width:{{sizeX}}px; position: relative;">
+                    <div class="tab-pane" id="2" style="background-color: #E7E7E7;height:{{sizeY}}px; width:{{sizeX}}px; position: relative;">
 
                         <div ng-repeat="capa in layers">
                             <div style="position: absolute; border:1px solid #a1a1a1;opacity: 1" ng-show="capa.estado ">

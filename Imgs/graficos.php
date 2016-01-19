@@ -23,6 +23,7 @@ class graficos {
      */
     function crearImagen($x, $y, $zi, $mx, $my, $capa, $type, $rgb, $conn) {
         if ($type == "MULTIPOINT") {
+            $rgb =substr($rgb, 1,-1);
             return crearImagenPuntos($x, $y, $zi, $mx, $my, $capa,$rgb, $conn);
         } else if ($type == "MULTILINESTRING") {           
             return crearImagenLineas($x, $y, $zi, $mx, $my, $capa,$rgb, $conn);
