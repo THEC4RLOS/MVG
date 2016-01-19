@@ -5,7 +5,7 @@
  * llamando al metodo conexión del archivo Query.php
  */
 require './query.php';
-
+set_time_limit(600); //elimitar el límite de tiempo de ejecución de la consulta
 $func = $_GET['func'];
 $conn = $_GET['conn'];
 

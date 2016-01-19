@@ -163,16 +163,20 @@
                                         <td>                                            
                                             <svg  style=" width: {{sizeX}}px; height: {{sizeY}}px; border:1px solid #a1a1a1;opacity: {{capa.opacidad}}   ">
                                             
-                                            <circle ng-repeat="punto in capa.puntos track by $index"
+                                            
+                                            <circle ng-if="capa.tipo == 'MULTIPOINT'" ng-repeat="punto in capa.puntos track by $index"
                                                     ng-attr-cx="{{((punto[0]-283585.639702539) / (366468.447793805/sizeX))}}" 
                                                     ng-attr-cy="{{(sizeY-(((punto[1] - 889378.554139937)/(366468.447793805/sizeY))))}}" 
                                                     r="3.2" 
                                                     stroke="gray" 
                                                     stroke-width="0" 
                                                     fill="rgb({{capa.color[0]}},{{capa.color[1]}},{{capa.color[2]}})" />
-                                            <polyline  ng-repeat="line1 in capa.polyLines track by $index"                                                  
+                                            <polyline  ng-repeat="line1 in capa.polygon track by $index"                                                  
                                                   ng-attr-points="{{line1}}"
-                                                  style="fill:none; stroke:rgb({{capa.rgb}});stroke-width:1" />                                                                                           
+                                                  style="fill:none; stroke:rgb({{capa.rgb}});stroke-width:1" /> 
+                                            <polyline ng-if="capa.tipo == 'MULTIPOLYGON'" ng-repeat="line1 in capa.polygon track by $index"                                                  
+                                                  ng-attr-points="{{line1}}"
+                                                  style="fill:rgb({{capa.rgb}}); stroke:black;stroke-width:1" /> 
                                             </svg>
                                         </td>
                                         </tr>

@@ -140,8 +140,7 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
 
                     for (j = 0; j < layer.puntos[i].length; j++) {
                         //arreglo con las líneas necesarias para dibujar la capa en svg
-                        //registro.push(linea);
-
+                        
                         var x = layer.puntos[i][j][0];
                         var y = layer.puntos[i][j][1];
                         //crear la capa de líneas en svg
@@ -166,26 +165,40 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
         }
     };
 
-    $scope.drawInCanvasPolygon = function (layer, newx, newy) {
+/**
+ * Funcion para dibujar en el canvas los poligonos y crear la estructura necesaria para dibujar
+ * en los svg
+ * @param {type} layer capa
+ * @param {type} newx movimiento en x
+ * @param {type} newy movimiento en y0
+ * @returns {undefined}
+ */
+    $scope.drawInCanvasPolygon = function (layer, newx, newy){
+        layer.color = JSON.parse(layer.color);
+        layer.polygon = Array();//arreglo de strings para dibujar los poligonos en svg
         if (layer.estado === true && layer.llamada === true) {
             var canvas = document.getElementById(layer.nombre);
             var context = canvas.getContext('2d');
             context.clearRect(0, 0, $scope.sizeX, $scope.sizeY);
-            layer.puntos.forEach(function (registro) {
-
+            for (i = 0; i < layer.puntos.length; i++) {
+                var strPolyLine = "";// string para almacenar los puntos de cada distrito, necesarios para dibujar el poligono en svg
                 context.beginPath();
-                registro.forEach(function (coordenada) {
-                    var x = coordenada[0];
-                    var y = coordenada[1];
-                    x = 10 + Math.round((x - 340735.03802508) / 430.145515478705);
-                    y = Math.round((y - 955392.16848899) / 430.145515478705);
+                for (j = 0; j < layer.puntos[i].length; j++) {
+                    var x = layer.puntos[i][j][0];
+                    var y = layer.puntos[i][j][1];
+                    x = Math.round((x - 283585.639702539) / (366468.447793805 / $scope.sizeY));
+                    y = Math.round((y - 889378.554139937) / (366468.447793805 / $scope.sizeY));
                     y = $scope.sizeY - y;
+                    strPolyLine += x + "," + y + " ";
                     context.lineTo(x, y);
-                });
+                    
+                }
+                layer.polygon.push(strPolyLine);
                 context.fill();
                 context.strokeStyle = "rgb(255,0,0)";
                 context.stroke();
-            });
+            }
+            layer.rgb = layer.color[0] + ", " + layer.color[1] + ", " + layer.color[2];
         }
     };
 
