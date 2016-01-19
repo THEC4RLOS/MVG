@@ -11,8 +11,7 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
     $scope.schema = 'public';
     $scope.user = 'postgres';
     $scope.pass = 12345;
-    $scope.layers; // todas las caas disponibles
-    $scope.SVGLayers = Array();
+    $scope.layers; // todas las caas disponibles    
 
     $scope.dim = ['300x300', '500x500', '700x700', '800x800', '900x900', '1000x1000'];
     $scope.selected = '300x300';
@@ -45,7 +44,7 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
             //si la capa actual tiene como estado visible, entonces actualizar
             //el tamaño de la imagen de acuerdo a las dimesiones
             if ($scope.layers[i].estado === true) {
-                var color = "[" + $scope.layers[i].color.toString() + "]"; // variable para almacenar el arreglo del color de la capa como un string
+                var color = "[" + $scope.layers[i].color + "]"; // variable para almacenar el arreglo del color de la capa como un string
                 var conn = 'host=' + $scope.host + '%20port=' + $scope.port + '%20dbname=' + $scope.db + '%20user=' + $scope.user + '%20password=' + $scope.pass;
                 var fun = "Imgs/imagen.php?x=" + $scope.sizeX + "&y=" + $scope.sizeY + "&zi=" + $scope.zi + "&mx=" + $scope.mx + "&my=" + $scope.my + "&capa=" + $scope.layers[i].nombre + "&tipo=" + $scope.layers[i].tipo + "&rgb=" + color;
                 var url = fun + "&conn=" + conn;
@@ -58,20 +57,24 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
     $scope.printGeometryColumns = function () {
 
         $scope.layers.forEach(function (layer) {
-
+            
             if (layer.estado === true && layer.llamada === false) {
+                var c1 = Math.floor(Math.random() * 255);
+                var c2 = Math.floor(Math.random() * 255);
+                var c3 = Math.floor(Math.random() * 255);
+                layer.color = c1 + "," + c2 + "," + c3;
                 var conn = 'host=' + $scope.host + '%20port=' + $scope.port + '%20dbname=' + $scope.db + '%20user=' + $scope.user + '%20password=' + $scope.pass;
                 myService.async(layer.nombre, conn).then(function (data) {
                     $scope.data = data;
                     layer.puntos = data;
                     console.log('data:', $scope.data);
-                    $scope.drawByType(layer, 0, 0);
-
-                    $scope.SVGLayers.push(layer);
+                    $scope.drawByType(layer, 0, 0);                   
+                    
                 });
-                layer.llamada = true;
-            }
+                layer.llamada = true;                
+            }            
         });
+        
         $scope.showImgs();
     };
 
@@ -87,6 +90,8 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
      */
 
     $scope.drawByType = function (layer, newx, newy) {
+        
+        
         if (layer.tipo === "MULTIPOINT") {
             $scope.drawInCanvasPoints(layer, newx, newy);
         } else if (layer.tipo === "MULTIPOLYGON") {
@@ -101,7 +106,7 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
             var canvas = document.getElementById(layer.nombre);
             var context = canvas.getContext('2d');
             context.clearRect(0, 0, $scope.sizeX, $scope.sizeY);
-            layer.color = JSON.parse(layer.color);
+            
 
             layer.puntos.forEach(function (coordenada) {
                 var x = (coordenada[0]);
@@ -116,7 +121,7 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
                 context.arc(x, y, 3, 0, 2 * Math.PI);
                 context.fill();
 
-                context.fillStyle = "rgb(" + layer.color[0] + "," + layer.color[1] + "," + layer.color[2] + ")";
+                context.fillStyle = "rgb("+layer.color+")";                
                 //context.strokeStyle = "rgb(232,0,0)";
                 //context.stroke();
             });
@@ -125,8 +130,7 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
 
 
     $scope.drawInCanvasLines = function (layer, newx, newy) {
-        //console.log(layer);
-        layer.color = JSON.parse(layer.color);
+                
         layer.polyLines = Array();
         if (layer.estado === true && layer.llamada === true) {
 
@@ -156,12 +160,10 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
                     }
                     layer.polyLines.push(strPolyLine);
                     context.fill();
-                    context.strokeStyle = "rgb(" + layer.color[0] + "," + layer.color[1] + "," + layer.color[2] + ")";
+                    context.strokeStyle = "rgb(" + layer.color + ")";
                     context.stroke();
                 }
-            }
-
-            layer.rgb = layer.color[0] + ", " + layer.color[1] + ", " + layer.color[2];
+            }           
         }
     };
 
@@ -174,7 +176,7 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
  * @returns {undefined}
  */
     $scope.drawInCanvasPolygon = function (layer, newx, newy){
-        layer.color = JSON.parse(layer.color);
+        
         layer.polygon = Array();//arreglo de strings para dibujar los poligonos en svg
         if (layer.estado === true && layer.llamada === true) {
             var canvas = document.getElementById(layer.nombre);
@@ -198,7 +200,7 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
                 context.strokeStyle = "rgb(255,0,0)";
                 context.stroke();
             }
-            layer.rgb = layer.color[0] + ", " + layer.color[1] + ", " + layer.color[2];
+
         }
     };
 
@@ -258,8 +260,8 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
 
         for (i = 0; i < $scope.layers.length; i++) {
 
-            if ($scope.layers[i].estado === true) {
-                var color = "[" + $scope.layers[i].color.toString() + "]"; // variable para almacenar el arreglo del color de la capa como un string
+            if ($scope.layers[i].estado === true) {               
+                var color = "[" + $scope.layers[i].color + "]"; // variable para almacenar el arreglo del color de la capa como un string                   
                 var conn = 'host=' + $scope.host + '%20port=' + $scope.port + '%20dbname=' + $scope.db + '%20user=' + $scope.user + '%20password=' + $scope.pass;
                 var fun = "Imgs/imagen.php?x=" + $scope.sizeX + "&y=" + $scope.sizeY + "&zi=" + $scope.zi + "&mx=" + $scope.mx +
                         "&my=" + $scope.my + "&capa=" + $scope.layers[i].nombre + "&tipo=" + $scope.layers[i].tipo + "&rgb=" + color;
@@ -285,14 +287,14 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
             //si es la primera vez que se muestran
             if ($scope.layers[id].url === "") {
                 //mostrar la capa requerida                       
-                var color = "[" + $scope.layers[id].color.toString() + "]"; // variable para almacenar el arreglo del color de la capa como un string
+                var color = "[" + $scope.layers[id].color + "]"; // variable para almacenar el arreglo del color de la capa como un string
                 var fun = "Imgs/imagen.php?x=" + $scope.sizeX + "&y=" + $scope.sizeY + "&zi=" + $scope.zi +
                         "&mx=" + $scope.mx + "&my=" + $scope.my + "&capa=" + $scope.layers[i].nombre + "&tipo=" + $scope.layers[i].tipo + "&rgb=" + color;
                 var url = fun + "&conn=" + conn;
                 $scope.layers[id].url = url;
 
             } else if ($scope.layers[id].actualizar === true) {
-                var color = "[" + $scope.layers[id].color.toString() + "]"; // variable para almacenar el arreglo del color de la capa como un string
+                var color = "[" + $scope.layers[id].color + "]"; // variable para almacenar el arreglo del color de la capa como un string
                 $scope.layers[id].actualizar = false;
                 var fun = "Imgs/imagen.php?x=" + $scope.sizeX + "&y=" + $scope.sizeY + "&zi=" + $scope.zi +
                         "&mx=" + $scope.mx + "&my=" + $scope.my + "&capa=" + $scope.layers[i].nombre + "&tipo=" + $scope.layers[i].tipo + "&rgb=" + color;
@@ -395,7 +397,7 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
         }
         for (i = 0; i < $scope.layers.length; i++) {
             if ($scope.layers[i].estado === true) {
-                var color = "[" + $scope.layers[i].color.toString() + "]"; // variable para almacenar el arreglo del color de la capa como un string
+                var color = "[" + $scope.layers[i].color + "]"; // variable para almacenar el arreglo del color de la capa como un string
                 var conn = 'host=' + $scope.host + '%20port=' + $scope.port + '%20dbname=' + $scope.db + '%20user=' + $scope.user + '%20password=' + $scope.pass;
                 var fun = "Imgs/imagen.php?x=" + $scope.sizeX + "&y=" + $scope.sizeY + "&zi=" + $scope.zi +
                         "&mx=" + $scope.mx + "&my=" + $scope.my + "&capa=" + $scope.layers[i].nombre + "&tipo=" + $scope.layers[i].tipo + "&rgb=" + color;
@@ -428,7 +430,7 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
         }
         for (i = 0; i < $scope.layers.length; i++) {
             if ($scope.layers[i].estado === true) {
-                var color = "[" + $scope.layers[i].color.toString() + "]"; // variable para almacenar el arreglo del color de la capa como un string
+                var color = "[" + $scope.layers[i].color + "]"; // variable para almacenar el arreglo del color de la capa como un string
                 var conn = 'host=' + $scope.host + '%20port=' + $scope.port + '%20dbname=' + $scope.db + '%20user=' + $scope.user + '%20password=' + $scope.pass;
                 var fun = "Imgs/imagen.php?x=" + $scope.sizeX + "&y=" + $scope.sizeY + "&zi=" + $scope.zi +
                         "&mx=" + $scope.mx + "&my=" + $scope.my + "&capa=" + $scope.layers[i].nombre + "&tipo=" + $scope.layers[i].tipo + "&rgb=" + color;
@@ -457,7 +459,7 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
             //si la capa actual tiene como estado visible, entonces actualizar
             //el tamaño de la imagen de acuerdo a las dimesiones
             if ($scope.layers[i].estado === true) {
-                var color = "[" + $scope.layers[i].color.toString() + "]"; // variable para almacenar el arreglo del color de la capa como un string
+                var color = "[" + $scope.layers[i].color+ "]"; // variable para almacenar el arreglo del color de la capa como un string
                 var conn = 'host=' + $scope.host + '%20port=' + $scope.port + '%20dbname=' + $scope.db + '%20user=' + $scope.user + '%20password=' + $scope.pass;
                 var fun = "Imgs/imagen.php?x=" + $scope.sizeX + "&y=" + $scope.sizeY + "&zi=" + $scope.zi +
                         "&mx=" + $scope.mx + "&my=" + $scope.my + "&capa=" + $scope.layers[i].nombre + "&tipo=" + $scope.layers[i].tipo + "&rgb=" + color;

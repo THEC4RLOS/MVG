@@ -170,13 +170,13 @@
                                                     r="3.2" 
                                                     stroke="gray" 
                                                     stroke-width="0" 
-                                                    fill="rgb({{capa.color[0]}},{{capa.color[1]}},{{capa.color[2]}})" />
-                                            <polyline  ng-repeat="line1 in capa.polygon track by $index"                                                  
+                                                    fill="rgb({{capa.color}})" />
+                                            <polyline  ng-repeat="line1 in capa.polyLines track by $index"                                                  
                                                   ng-attr-points="{{line1}}"
-                                                  style="fill:none; stroke:rgb({{capa.rgb}});stroke-width:1" /> 
+                                                  style="fill:none; stroke:rgb({{capa.color}});stroke-width:1" /> 
                                             <polyline ng-if="capa.tipo == 'MULTIPOLYGON'" ng-repeat="line1 in capa.polygon track by $index"                                                  
                                                   ng-attr-points="{{line1}}"
-                                                  style="fill:rgb({{capa.rgb}}); stroke:black;stroke-width:1" /> 
+                                                  style="fill:rgb({{capa.color}}); stroke:black;stroke-width:1" /> 
                                             </svg>
                                         </td>
                                         </tr>

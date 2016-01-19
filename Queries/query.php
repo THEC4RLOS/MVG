@@ -17,10 +17,8 @@ class query {
         $query = "select f_table_schema, f_table_name, srid, type, 'false' estado, '[]' puntos, 'false' llamada from geometry_Columns where f_table_schema = '$schema'";
         $result = pg_query($conn, $query) or die('{"status":1 , "error":"Error al obtener datos de las tablas (GeometryColumns)"}');
         while ($row = pg_fetch_row($result)) {
-            //colores aleatorios
-            $r = rand(0, 255);
-            $g = rand(0, 150);
-            $b = rand(0, 200);
+
+     
             
             $geometryColumns = array(
                 "esquema" => $row[0],
@@ -31,9 +29,7 @@ class query {
                 "puntos" => json_decode($row[5]),
                 "llamada" => json_decode($row[6]), // si ya se hizo la llamada para obtener los puntos
                 "opacidad" => 1,
-                "actualizar" => false,
-                "color" => json_encode(array($r,$g,$b)),
-                "lineas" => array()
+                "actualizar" => false                                
             );
             array_push($respuesta, $geometryColumns);
         }
