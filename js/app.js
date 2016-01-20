@@ -52,15 +52,14 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
                 var fun = "Imgs/imagen.php?x=" + $scope.sizeX + "&y=" + $scope.sizeY + "&zi=" + $scope.zi + "&mx=" + $scope.mx + "&my=" + $scope.my + "&capa=" + $scope.layers[i].nombre + "&tipo=" + $scope.layers[i].tipo + "&rgb=" + color;
                 var url = fun + "&conn=" + conn;
                 $scope.layers[i].url = url;
-
             }
         }
-
     };
+
     $scope.printGeometryColumns = function () {
 
         $scope.layers.forEach(function (layer) {
-            
+
             if (layer.estado === true && layer.llamada === false) {
                 var c1 = Math.floor(Math.random() * 255);
                 var c2 = Math.floor(Math.random() * 255);
@@ -70,14 +69,13 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
                 myService.async(layer.nombre, conn).then(function (data) {
                     $scope.data = data;
                     layer.puntos = data;
-                    console.log('data:', $scope.data);
-                    $scope.drawByType(layer, 0, 0);                   
-                    
+                    layer.cleanPoints = $scope.data; // puntos en limpio, sus valores no se cambiaran
+                    layer.factor = false;
+                    $scope.drawByType(layer, 0, 0);
                 });
-                layer.llamada = true;                
-            }            
+                layer.llamada = true;
+            }
         });
-        
         $scope.showImgs();
     };
 
@@ -89,11 +87,11 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
 
     /**
      * Función para seleccionar el método utilizado para dibujar la capa según su tipo
+     * @param {object} layer
      */
-
     $scope.drawByType = function (layer) {
-        
-        
+
+
         if (layer.tipo === "MULTIPOINT") {
             $scope.drawInCanvasPoints(layer);
         } else if (layer.tipo === "MULTIPOLYGON") {
@@ -103,50 +101,58 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
         }
     };
 
-    $scope.drawInCanvasPoints = function (layer) {       
+    $scope.drawInCanvasPoints = function (layer) {
         if (layer.estado === true && layer.llamada === true) {
+            var cambiar = false;
             var canvas = document.getElementById(layer.nombre);
             var context = canvas.getContext('2d');
             context.clearRect(0, 0, $scope.sizeX, $scope.sizeY);
-            
+            cambiar = layer.factor;
 
             layer.puntos.forEach(function (coordenada) {
-                var x = (coordenada[0]);
-                var y = (coordenada[1]);
+                var x = coordenada[0];
+                var y = coordenada[1];
+                if (cambiar === false) {
+                    x = Math.round((x - 283585.639702539) / (366468.447793805 / $scope.sizeY));
+                    y = Math.round((y - 889378.554139937) / (366468.447793805 / $scope.sizeY));
+                    y = $scope.sizeY - y;
+                }
+                x = x + Math.round(x * $scope.newx);
+                y = y + Math.round(y * $scope.newy);
+                console.log(x, (x * $scope.newx), y, (y * $scope.newy));
 
-                x = Math.round((x - 283585.639702539) / (366468.447793805 / $scope.sizeY));
-                y = Math.round((y - 889378.554139937) / (366468.447793805 / $scope.sizeY));
-
-                y = $scope.sizeY - y;
-
+                coordenada[0] = x;
+                coordenada[1] = y;
+                //console.log(coordenada[0], x, coordenada[1], y);
                 context.beginPath();
-                context.arc(x+$scope.newx, y+$scope.newy, 3, 0, 2 * Math.PI);
+                context.arc(x, y, 3, 0, 2 * Math.PI);
                 context.fill();
-
-                context.fillStyle = "rgb("+layer.color+")";                
+                context.fillStyle = "rgb(" + layer.color + ")";
                 //context.strokeStyle = "rgb(232,0,0)";
                 //context.stroke();
             });
+            if (layer.factor === false) {
+                layer.factor = true;
+            }
+            console.log('----------->>');
         }
     };
-    
+
     /*
      * Función utilizada para asignar los puntos a dibujar al arreglo que controla el svg
-     * @param {type} layer
-     * @returns {undefined}
      */
-    $scope.drawSVGByType = function(){
-        $scope.layers.forEach(function(layer){
-            if(layer.tipo==="MULTIPOINT"){
+    $scope.drawSVGByType = function () {
+        $scope.layers.forEach(function (layer) {
+            if (layer.tipo === "MULTIPOINT") {
                 layer.points = layer.puntos;
             }
         });
-        
+
     };
 
 
     $scope.drawInCanvasLines = function (layer) {
-                
+
         layer.polyLines = Array();
         if (layer.estado === true && layer.llamada === true) {
 
@@ -181,23 +187,23 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
                     context.strokeStyle = "rgb(" + layer.color + ")";
                     context.stroke();
                 }
-            }           
+            }
         }
     };
-    
-    
-    
 
-/**
- * Funcion para dibujar en el canvas los poligonos y crear la estructura necesaria para dibujar
- * en los svg
- * @param {type} layer capa
- * @param {type} newx movimiento en x
- * @param {type} newy movimiento en y0
- * @returns {undefined}
- */
-    $scope.drawInCanvasPolygon = function (layer, newx, newy){
-        
+
+
+
+    /**
+     * Funcion para dibujar en el canvas los poligonos y crear la estructura necesaria para dibujar
+     * en los svg
+     * @param {type} layer capa
+     * @param {type} newx movimiento en x
+     * @param {type} newy movimiento en y0
+     * @returns {undefined}
+     */
+    $scope.drawInCanvasPolygon = function (layer, newx, newy) {
+
         layer.polygon = Array();//arreglo de strings para dibujar los poligonos en svg
         if (layer.estado === true && layer.llamada === true) {
             var canvas = document.getElementById(layer.nombre);
@@ -239,7 +245,6 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
                         function (response)
                         {
                             $scope.layers = response.data;
-                            console.log($scope.layers);
                         }
                 );
     };
@@ -253,7 +258,6 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
         var conn = 'host=' + $scope.host + '%20port=' + $scope.port + '%20dbname=' + $scope.db + '%20user=' + $scope.user + '%20password=' + $scope.pass;
         var func = './Queries/request.php?func=connect&conn=';
         var url = func + conn;
-        console.log("conexion\n" + url);
         $http({method: 'GET', url: url}).
                 then(
                         function (response)
@@ -283,14 +287,13 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
 
         for (i = 0; i < $scope.layers.length; i++) {
 
-            if ($scope.layers[i].estado === true) {               
+            if ($scope.layers[i].estado === true) {
                 var color = "[" + $scope.layers[i].color + "]"; // variable para almacenar el arreglo del color de la capa como un string                   
                 var conn = 'host=' + $scope.host + '%20port=' + $scope.port + '%20dbname=' + $scope.db + '%20user=' + $scope.user + '%20password=' + $scope.pass;
                 var fun = "Imgs/imagen.php?x=" + $scope.sizeX + "&y=" + $scope.sizeY + "&zi=" + $scope.zi + "&mx=" + $scope.mx +
                         "&my=" + $scope.my + "&capa=" + $scope.layers[i].nombre + "&tipo=" + $scope.layers[i].tipo + "&rgb=" + color;
                 var url = fun + "&conn=" + conn;
                 $scope.layers[i].url = url;
-                //console.log(url);
 
             }
         }
@@ -400,26 +403,30 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
 
         if (ind === 0) {
             $scope.my += 1;
-            $scope.newy += 1;
+            $scope.newy = 0.1;
+            $scope.newx = 0;
             $scope.canvasMov();
         }
         // realicar el movimiento de la imagen hacia arriba
         else if (ind === 1)
         {
             $scope.my -= 1;
-            $scope.newy -= 1;
+            $scope.newy = -0.1;
+            $scope.newx = 0;
             $scope.canvasMov();
         }
         //izquierda
         else if (ind === 3) {
             $scope.mx += 1;
-            $scope.newx += 1;
+            $scope.newx = 0.1;
+            $scope.newy = 0;
             $scope.canvasMov();
         }
         //derecha
         else if (ind === 4) {
             $scope.mx -= 1;
-            $scope.newx -= 1;
+            $scope.newx = -0.1;
+            $scope.newy = 0;
             $scope.canvasMov();
         }
         for (i = 0; i < $scope.layers.length; i++) {
@@ -486,7 +493,7 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
             //si la capa actual tiene como estado visible, entonces actualizar
             //el tamaño de la imagen de acuerdo a las dimesiones
             if ($scope.layers[i].estado === true) {
-                var color = "[" + $scope.layers[i].color+ "]"; // variable para almacenar el arreglo del color de la capa como un string
+                var color = "[" + $scope.layers[i].color + "]"; // variable para almacenar el arreglo del color de la capa como un string
                 var conn = 'host=' + $scope.host + '%20port=' + $scope.port + '%20dbname=' + $scope.db + '%20user=' + $scope.user + '%20password=' + $scope.pass;
                 var fun = "Imgs/imagen.php?x=" + $scope.sizeX + "&y=" + $scope.sizeY + "&zi=" + $scope.zi +
                         "&mx=" + $scope.mx + "&my=" + $scope.my + "&capa=" + $scope.layers[i].nombre + "&tipo=" + $scope.layers[i].tipo + "&rgb=" + color;
@@ -535,7 +542,6 @@ myApp.factory('myService', function ($http) {
             // $http returns a promise, which has a then function, which also returns a promise
             var promise = $http.get(url).then(function (response) {
                 // The then function here is an opportunity to modify the response
-                //console.log(response);
                 // The return value gets picked up by the then in the controller.
                 return response.data;
             });
