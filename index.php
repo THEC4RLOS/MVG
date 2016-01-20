@@ -115,7 +115,7 @@
                     </div>
                     <div>
                         <h1 class="label label-primary">Dimension</h1>
-                        <select ng-change="update()"style="margin: 2%" ng-model="selected" ng-options="opt as opt for opt in dim" ng-init="selected = '300x300'"></select>
+                        <select ng-change="update()"style="margin: 2%" ng-model="selected" ng-options="opt as opt for opt in dim" ng-init="selected = '500x500'"></select>
                         <!--h3>You have selected : {{selected}}</h3-->
                     </div>
 
@@ -133,7 +133,7 @@
                     <li title="Visualizacion en etiqueta SVG">
                         <a href="#3" data-toggle="tab">SVG</a>
                     </li>
-                    <li title="Visualizacion en etiqueta IMG">
+                    <li title="Visualizacion en etiqueta IMG" ng-click="showImgs();">
                         <a href="#2" data-toggle="tab">IMG</a>
                     </li>
                     
@@ -156,14 +156,13 @@
                     </div>
                      
                     <div  class="tab-pane" id="3" style="background-color: #E7E7E7;height:{{sizeY}}px; width:{{sizeX}}px; position: absolute;">
-                        <button ng-click="drawSVGByType()">Cargar capas</button>
                         <div ng-repeat="capa in layers">
                             <div style="position: absolute" ng-show="capa.estado">
                                 <table>
                                     <tr>
                                         <td>                                            
                                             <svg  style=" width: {{sizeX}}px; height: {{sizeY}}px; border:1px solid #a1a1a1;opacity: {{capa.opacidad}}   ">                                                                                        
-                                            <circle ng-if="capa.tipo == 'MULTIPOINT'" ng-repeat="punto in capa.points track by $index"
+                                            <circle ng-if="capa.tipo == 'MULTIPOINT'" ng-repeat="punto in capa.puntos track by $index"
                                                     ng-attr-cx="{{punto[0]}}" 
                                                     ng-attr-cy="{{punto[1]}}" 
                                                     r="3.2" 
