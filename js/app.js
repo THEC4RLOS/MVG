@@ -90,8 +90,6 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
      * @param {object} layer
      */
     $scope.drawByType = function (layer) {
-
-
         if (layer.tipo === "MULTIPOINT") {
             $scope.drawInCanvasPoints(layer);
         } else if (layer.tipo === "MULTIPOLYGON") {
@@ -99,6 +97,17 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
         } else if (layer.tipo === "MULTILINESTRING") {
             $scope.drawInCanvasLines(layer);
         }
+    };
+
+    /*
+     * Función utilizada para asignar los puntos a dibujar al arreglo que controla el svg
+     */
+    $scope.drawSVGByType = function () {
+        $scope.layers.forEach(function (layer) {
+            if (layer.tipo === "MULTIPOINT") {
+                layer.points = layer.puntos;
+            }
+        });
     };
 
     $scope.drawInCanvasPoints = function (layer) {
@@ -134,31 +143,19 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
             if (layer.factor === false) {
                 layer.factor = true;
             }
-            //console.log('----------->>');
         }
     };
-
-    /*
-     * Función utilizada para asignar los puntos a dibujar al arreglo que controla el svg
-     */
-    $scope.drawSVGByType = function () {
-        $scope.layers.forEach(function (layer) {
-            if (layer.tipo === "MULTIPOINT") {
-                layer.points = layer.puntos;
-            }
-        });
-
-    };
-
 
     $scope.drawInCanvasLines = function (layer) {
 
         layer.polyLines = Array();
         if (layer.estado === true && layer.llamada === true) {
-
+            var cambiar = false;
             var canvas = document.getElementById(layer.nombre);
             var context = canvas.getContext('2d');
             context.clearRect(0, 0, $scope.sizeX, $scope.sizeY);
+            cambiar = layer.factor;
+
             for (i = 0; i < layer.puntos.length; i++) {
                 var strPolyLine = "";
                 if (layer.puntos[i] !== null) {
@@ -170,12 +167,16 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
                         var x = layer.puntos[i][j][0];
                         var y = layer.puntos[i][j][1];
                         //crear la capa de líneas en svg
+                        if (cambiar === false) {
+                            x = Math.round((x - 283585.639702539) / (366468.447793805 / $scope.sizeY));
+                            y = Math.round((y - 889378.554139937) / (366468.447793805 / $scope.sizeY));
+                            y = $scope.sizeY - y;
+                        }
+                        x = x + Math.round($scope.sizeX * $scope.newx);
+                        y = y + Math.round($scope.sizeY * $scope.newy);
 
-                        x = Math.round((x - 283585.639702539) / (366468.447793805 / $scope.sizeY));
-                        y = Math.round((y - 889378.554139937) / (366468.447793805 / $scope.sizeY));
-                        x = x + ((x * 0.1) * $scope.newx);
-                        y = $scope.sizeY - y;
-                        y = y + ((y * 0.1) * $scope.newy);
+                        layer.puntos[i][j][0] = x;
+                        layer.puntos[i][j][1] = y;
 
                         strPolyLine += x + "," + y + " ";
                         context.lineTo(x, y);
@@ -188,38 +189,44 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
                     context.stroke();
                 }
             }
+            if (layer.factor === false) {
+                layer.factor = true;
+            }
         }
     };
-
-
-
 
     /**
      * Funcion para dibujar en el canvas los poligonos y crear la estructura necesaria para dibujar
      * en los svg
      * @param {type} layer capa
-     * @param {type} newx movimiento en x
-     * @param {type} newy movimiento en y0
      * @returns {undefined}
      */
-    $scope.drawInCanvasPolygon = function (layer, newx, newy) {
+    $scope.drawInCanvasPolygon = function (layer) {
 
         layer.polygon = Array();//arreglo de strings para dibujar los poligonos en svg
         if (layer.estado === true && layer.llamada === true) {
+            var cambiar = false;
             var canvas = document.getElementById(layer.nombre);
             var context = canvas.getContext('2d');
             context.clearRect(0, 0, $scope.sizeX, $scope.sizeY);
+            cambiar = layer.factor;
             for (i = 0; i < layer.puntos.length; i++) {
                 var strPolyLine = "";// string para almacenar los puntos de cada distrito, necesarios para dibujar el poligono en svg
                 context.beginPath();
                 for (j = 0; j < layer.puntos[i].length; j++) {
                     var x = layer.puntos[i][j][0];
                     var y = layer.puntos[i][j][1];
-                    x = Math.round((x - 283585.639702539) / (366468.447793805 / $scope.sizeY));
-                    y = Math.round((y - 889378.554139937) / (366468.447793805 / $scope.sizeY));
-                    x = x + ((x * 0.1) * $scope.newx);
-                    y = $scope.sizeY - y;
-                    y = y + ((y * 0.1) * $scope.newy);
+                    if (cambiar === false) {
+                        x = Math.round((x - 283585.639702539) / (366468.447793805 / $scope.sizeY));
+                        y = Math.round((y - 889378.554139937) / (366468.447793805 / $scope.sizeY));
+                        y = $scope.sizeY - y;
+                    }
+                    x = x + Math.round($scope.sizeX * $scope.newx);
+                    y = y + Math.round($scope.sizeY * $scope.newy);
+
+                    layer.puntos[i][j][0] = x;
+                    layer.puntos[i][j][1] = y;
+
                     strPolyLine += x + "," + y + " ";
                     context.lineTo(x, y);
 
@@ -228,6 +235,9 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
                 context.fill();
                 context.strokeStyle = "rgb(255,0,0)";
                 context.stroke();
+            }
+            if (layer.factor === false) {
+                layer.factor = true;
             }
 
         }
