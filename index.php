@@ -127,7 +127,7 @@
 
             <div id="exTab2" class="">	
                 <ul class="nav nav-tabs">
-                    <li class="active" title="Visualizacion en etiqueta CANVAS">
+                    <li class="active" title="Visualizacion en etiqueta CANVAS" ng-click="visualizarCanvas(false);">
                         <a  href="#1" data-toggle="tab">CANVAS</a>
                     </li>
                     <li title="Visualizacion en etiqueta SVG">
