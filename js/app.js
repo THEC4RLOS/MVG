@@ -117,9 +117,9 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
                     y = Math.round((y - 889378.554139937) / (366468.447793805 / $scope.sizeY));
                     y = $scope.sizeY - y;
                 }
-                x = x + Math.round(x * $scope.newx);
-                y = y + Math.round(y * $scope.newy);
-                console.log(x, (x * $scope.newx), y, (y * $scope.newy));
+                x = x + Math.round($scope.sizeX * $scope.newx);
+                y = y + Math.round($scope.sizeY * $scope.newy);
+                //console.log(x, (x * $scope.newx), y, (y * $scope.newy));
 
                 coordenada[0] = x;
                 coordenada[1] = y;
@@ -134,7 +134,7 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
             if (layer.factor === false) {
                 layer.factor = true;
             }
-            console.log('----------->>');
+            //console.log('----------->>');
         }
     };
 
