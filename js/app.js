@@ -104,6 +104,7 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
     };
 
     $scope.drawInCanvasPoints = function (layer) {
+        $scope.drawInSVGPoints(layer);
         if (layer.estado === true && layer.llamada === true) {
             var canvas = document.getElementById(layer.nombre);
             var context = canvas.getContext('2d');
@@ -128,6 +129,15 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
                 //context.stroke();
             });
         }
+    };
+    
+    /*
+     * Función utilizada para 
+     * @param {type} layer
+     * @returns {undefined}
+     */
+    $scope.drawInSVGPoints= function(layer){
+        layer.points = layer.puntos;           
     };
 
 
