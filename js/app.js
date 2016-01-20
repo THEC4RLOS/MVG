@@ -103,8 +103,7 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
         }
     };
 
-    $scope.drawInCanvasPoints = function (layer) {
-        $scope.drawInSVGPoints(layer);
+    $scope.drawInCanvasPoints = function (layer) {       
         if (layer.estado === true && layer.llamada === true) {
             var canvas = document.getElementById(layer.nombre);
             var context = canvas.getContext('2d');
@@ -132,12 +131,17 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
     };
     
     /*
-     * Función utilizada para 
+     * Función utilizada para asignar los puntos a dibujar al arreglo que controla el svg
      * @param {type} layer
      * @returns {undefined}
      */
-    $scope.drawInSVGPoints= function(layer){
-        layer.points = layer.puntos;           
+    $scope.drawSVGByType = function(){
+        $scope.layers.forEach(function(layer){
+            if(layer.tipo==="MULTIPOINT"){
+                layer.points = layer.puntos;
+            }
+        });
+        
     };
 
 
@@ -180,6 +184,9 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
             }           
         }
     };
+    
+    
+    
 
 /**
  * Funcion para dibujar en el canvas los poligonos y crear la estructura necesaria para dibujar
