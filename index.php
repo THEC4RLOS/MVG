@@ -156,7 +156,7 @@
                     </div>
                      
                     <div  class="tab-pane" id="3" style="background-color: #E7E7E7;height:{{sizeY}}px; width:{{sizeX}}px; position: absolute;">
-                        <button ng-click="drawInSVGPoints()">Cargar capas</button>
+                        <button ng-click="drawSVGByType()">Cargar capas</button>
                         <div ng-repeat="capa in layers">
                             <div style="position: absolute" ng-show="capa.estado">
                                 <table>
@@ -164,8 +164,8 @@
                                         <td>                                            
                                             <svg  style=" width: {{sizeX}}px; height: {{sizeY}}px; border:1px solid #a1a1a1;opacity: {{capa.opacidad}}   ">                                                                                        
                                             <circle ng-if="capa.tipo == 'MULTIPOINT'" ng-repeat="punto in capa.points track by $index"
-                                                    ng-attr-cx="{{((punto[0]-283585.639702539) / (366468.447793805/sizeX))}}" 
-                                                    ng-attr-cy="{{(sizeY-(((punto[1] - 889378.554139937)/(366468.447793805/sizeY))))}}" 
+                                                    ng-attr-cx="{{punto[0]}}" 
+                                                    ng-attr-cy="{{punto[1]}}" 
                                                     r="3.2" 
                                                     stroke="gray" 
                                                     stroke-width="0" 

@@ -23,6 +23,11 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
     $scope.zi = 0; //cantidad de peticiones al zoom
     $scope.imgUrl = "";
     $scope.lineLayers = Array();
+    $scope.imgEnable = false; // variable para indicar si se ha activado el método de visualización img
+    $scope.svgEnable = false; // variable para indicar si se ha activado el método de visualización svg
+    $scope.canvasEnable = false; // variable para indicar si se ha activado el método de visualización canvas
+
+    $scope.listo = false;//saber si las capas están listas para dibujarse
 
     $scope.layers = [];
 
@@ -56,6 +61,10 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
         }
     };
 
+    /**
+     * Función para solicitar las geometrías de las capas y controlar los métodos que las dibujan
+     * @returns {undefined}
+     */
     $scope.printGeometryColumns = function () {
 
         $scope.layers.forEach(function (layer) {
@@ -70,18 +79,25 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
                     $scope.data = data;
                     layer.puntos = data;
                     layer.cleanPoints = $scope.data; // puntos en limpio, sus valores no se cambiaran
+                    layer.points = $scope.data;
                     layer.factor = false;
-                    $scope.drawByType(layer, 0, 0);
+                    $scope.listo = true; // saber que se pueden solicitar las capas
+                    if($scope.canavasEnable === true)
+                        {$scope.drawByType(layer, 0, 0);}
+                    if($scope.svgEnable === true)
+                        {$scope.drawSVGByType();}
                 });
                 layer.llamada = true;
             }
         });
-        $scope.showImgs();
+        if($scope.imgEnable === true)
+            {$scope.showImgs();}
     };
 
     $scope.canvasMov = function () {
         $scope.layers.forEach(function (layer) {
             $scope.drawByType(layer);
+            $scope.drawSVGByType(layer);
         });
     };
 
@@ -90,25 +106,16 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
      * @param {object} layer
      */
     $scope.drawByType = function (layer) {
+        $scope.canvasEnable = true;
         if (layer.tipo === "MULTIPOINT") {
-            $scope.drawInCanvasPoints(layer);
+            //$scope.drawInCanvasPoints(layer);
         } else if (layer.tipo === "MULTIPOLYGON") {
             $scope.drawInCanvasPolygon(layer);
         } else if (layer.tipo === "MULTILINESTRING") {
             $scope.drawInCanvasLines(layer);
         }
     };
-
-    /*
-     * Función utilizada para asignar los puntos a dibujar al arreglo que controla el svg
-     */
-    $scope.drawSVGByType = function () {
-        $scope.layers.forEach(function (layer) {
-            if (layer.tipo === "MULTIPOINT") {
-                layer.points = layer.puntos;
-            }
-        });
-    };
+   
 
     $scope.drawInCanvasPoints = function (layer) {
         if (layer.estado === true && layer.llamada === true) {
@@ -146,9 +153,143 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
         }
     };
 
-    $scope.drawInCanvasLines = function (layer) {
+    /*
+     * Función utilizada para asignar los puntos a dibujar al arreglo que controla el svg
+     */
+    $scope.drawSVGByType = function () {
+        $scope.svgEnable = true; //activar el modo svg
+        $scope.layers.forEach(function (layer) {
+            if (layer.tipo === "MULTIPOINT") {
+                $scope.drawSVGPoints(layer);
+            }
+            if (layer.tipo === "MULTILINESTRING") {
+
+                $scope.drawInSVGLines(layer);
+            }
+            else if (layer.tipo === "MULTIPOLYGON") {
+                $scope.drawInSVGPolygon(layer);
+            }
+        });
+
+    };
+
+    /*
+     * Función que prepara el arreglo necesario para dibujar en svg
+     * @param {type} layer capa a dibujar en svg
+     * @returns {undefined}
+     */
+    $scope.drawSVGPoints = function (layer) {
+        if (layer.estado === true && layer.llamada === true) {
+            var cambiar = false;
+            cambiar = layer.factor;
+
+            layer.points.forEach(function (coordenada) {
+                var x = coordenada[0];
+                var y = coordenada[1];
+                if (cambiar === false) {
+                    x = Math.round((x - 283585.639702539) / (366468.447793805 / $scope.sizeY));
+                    y = Math.round((y - 889378.554139937) / (366468.447793805 / $scope.sizeY));
+                    y = $scope.sizeY - y;
+                }
+                x = x + Math.round($scope.sizeX * $scope.newx);
+                y = y + Math.round($scope.sizeY * $scope.newy);
+                //console.log(x, (x * $scope.newx), y, (y * $scope.newy));
+
+                coordenada[0] = x;
+                coordenada[1] = y;
+                //console.log(coordenada[0], x, coordenada[1], y);                
+                //context.strokeStyle = "rgb(232,0,0)";
+                //context.stroke();
+            });
+            if (layer.factor === false) {
+                layer.factor = true;
+            }
+        }
+    };
+
+    /**
+     * Función que crea un string por cada registro 
+     * @param {type} layer
+     * @returns {undefined}
+     */
+    $scope.drawInSVGLines = function (layer) {
 
         layer.polyLines = Array();
+        if (layer.estado === true && layer.llamada === true) {
+            var cambiar = false;
+            cambiar = layer.factor;
+
+            for (i = 0; i < layer.puntos.length; i++) {
+                var strPolyLine = "";
+                if (layer.puntos[i] !== null) {
+
+                    for (j = 0; j < layer.puntos[i].length; j++) {
+                        //arreglo con las líneas necesarias para dibujar la capa en svg
+
+                        var x = layer.puntos[i][j][0];
+                        var y = layer.puntos[i][j][1];
+                        //crear la capa de líneas en svg
+                        if (cambiar === false) {
+                            x = Math.round((x - 283585.639702539) / (366468.447793805 / $scope.sizeY));
+                            y = Math.round((y - 889378.554139937) / (366468.447793805 / $scope.sizeY));
+                            y = $scope.sizeY - y;
+                        }
+                        x = x + Math.round($scope.sizeX * $scope.newx);
+                        y = y + Math.round($scope.sizeY * $scope.newy);
+
+                        layer.puntos[i][j][0] = x;
+                        layer.puntos[i][j][1] = y;
+
+                        strPolyLine += x + "," + y + " ";
+
+                    }
+                    layer.polyLines.push(strPolyLine);
+                }
+            }
+            if (layer.factor === false) {
+                layer.factor = true;
+            }
+        }
+    };
+
+    $scope.drawInSVGPolygon = function (layer) {
+
+
+        if (layer.estado === true && layer.llamada === true) {
+            var cambiar = false;
+            cambiar = layer.factor;
+            for (i = 0; i < layer.puntos.length; i++) {
+
+                for (j = 0; j < layer.puntos[i].length; j++) {
+                    var x = layer.puntos[i][j][0];
+                    var y = layer.puntos[i][j][1];
+                    if (cambiar === false) {
+                        x = Math.round((x - 283585.639702539) / (366468.447793805 / $scope.sizeY));
+                        y = Math.round((y - 889378.554139937) / (366468.447793805 / $scope.sizeY));
+                        y = $scope.sizeY - y;
+                    }
+                    x = x + Math.round($scope.sizeX * $scope.newx);
+                    y = y + Math.round($scope.sizeY * $scope.newy);
+
+                    layer.puntos[i][j][0] = x;
+                    layer.puntos[i][j][1] = y;
+
+
+
+
+                }
+
+            }
+            if (layer.factor === false) {
+                layer.factor = true;
+            }
+
+        }
+    };
+
+    $scope.drawInCanvasLines = function (layer) {
+
+
         if (layer.estado === true && layer.llamada === true) {
             var cambiar = false;
             var canvas = document.getElementById(layer.nombre);
@@ -157,7 +298,7 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
             cambiar = layer.factor;
 
             for (i = 0; i < layer.puntos.length; i++) {
-                var strPolyLine = "";
+
                 if (layer.puntos[i] !== null) {
                     context.beginPath();
 
@@ -178,12 +319,12 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
                         layer.puntos[i][j][0] = x;
                         layer.puntos[i][j][1] = y;
 
-                        strPolyLine += x + "," + y + " ";
+
                         context.lineTo(x, y);
                         context.moveTo(x, y);
 
                     }
-                    layer.polyLines.push(strPolyLine);
+
                     context.fill();
                     context.strokeStyle = "rgb(" + layer.color + ")";
                     context.stroke();
@@ -294,7 +435,7 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
 
     ////----------------------------------------------sección para las imgs
     $scope.showImgs = function () {
-
+        $scope.imgEnable = true;
         for (i = 0; i < $scope.layers.length; i++) {
 
             if ($scope.layers[i].estado === true) {
@@ -315,27 +456,30 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
      * @returns {undefined}
      */
     $scope.controlarVisualizacion = function (layer) {
+
         var id = $scope.layers.indexOf(layer);
 
         if ($scope.layers[id].estado === false) {
             $scope.layers[id].estado = true;
-            var conn = 'host=' + $scope.host + '%20port=' + $scope.port + '%20dbname=' + $scope.db + '%20user=' + $scope.user + '%20password=' + $scope.pass;
-            //si es la primera vez que se muestran
-            if ($scope.layers[id].url === "") {
-                //mostrar la capa requerida                       
-                var color = "[" + $scope.layers[id].color + "]"; // variable para almacenar el arreglo del color de la capa como un string
-                var fun = "Imgs/imagen.php?x=" + $scope.sizeX + "&y=" + $scope.sizeY + "&zi=" + $scope.zi +
-                        "&mx=" + $scope.mx + "&my=" + $scope.my + "&capa=" + $scope.layers[i].nombre + "&tipo=" + $scope.layers[i].tipo + "&rgb=" + color;
-                var url = fun + "&conn=" + conn;
-                $scope.layers[id].url = url;
+            if ($scope.imgEnable === true) {
+                var conn = 'host=' + $scope.host + '%20port=' + $scope.port + '%20dbname=' + $scope.db + '%20user=' + $scope.user + '%20password=' + $scope.pass;
+                //si es la primera vez que se muestran
+                if ($scope.layers[id].url === "") {
+                    //mostrar la capa requerida                       
+                    var color = "[" + $scope.layers[id].color + "]"; // variable para almacenar el arreglo del color de la capa como un string
+                    var fun = "Imgs/imagen.php?x=" + $scope.sizeX + "&y=" + $scope.sizeY + "&zi=" + $scope.zi +
+                            "&mx=" + $scope.mx + "&my=" + $scope.my + "&capa=" + $scope.layers[i].nombre + "&tipo=" + $scope.layers[i].tipo + "&rgb=" + color;
+                    var url = fun + "&conn=" + conn;
+                    $scope.layers[id].url = url;
 
-            } else if ($scope.layers[id].actualizar === true) {
-                var color = "[" + $scope.layers[id].color + "]"; // variable para almacenar el arreglo del color de la capa como un string
-                $scope.layers[id].actualizar = false;
-                var fun = "Imgs/imagen.php?x=" + $scope.sizeX + "&y=" + $scope.sizeY + "&zi=" + $scope.zi +
-                        "&mx=" + $scope.mx + "&my=" + $scope.my + "&capa=" + $scope.layers[i].nombre + "&tipo=" + $scope.layers[i].tipo + "&rgb=" + color;
-                var url = fun + "&conn=" + conn;
-                $scope.layers[id].url = url;
+                } else if ($scope.layers[id].actualizar === true) {
+                    var color = "[" + $scope.layers[id].color + "]"; // variable para almacenar el arreglo del color de la capa como un string
+                    $scope.layers[id].actualizar = false;
+                    var fun = "Imgs/imagen.php?x=" + $scope.sizeX + "&y=" + $scope.sizeY + "&zi=" + $scope.zi +
+                            "&mx=" + $scope.mx + "&my=" + $scope.my + "&capa=" + $scope.layers[i].nombre + "&tipo=" + $scope.layers[i].tipo + "&rgb=" + color;
+                    var url = fun + "&conn=" + conn;
+                    $scope.layers[id].url = url;
+                }
             }
         }
 
@@ -360,6 +504,7 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
             $scope.layers[id - 1] = $scope.layers[id];
             $scope.layers[id] = temp;
         }
+
     };
 
     /**
@@ -377,6 +522,7 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
             $scope.layers[id + 1] = $scope.layers[id];
             $scope.layers[id] = temp;
         }
+
     };
 
     /**
@@ -399,6 +545,7 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
             }
 
         }
+
     };
     /**
      * Funcion que suma y resta la cantidad de movientos a la izquierda que solicita el usuario
@@ -439,19 +586,21 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
             $scope.newy = 0;
             $scope.canvasMov();
         }
-        for (i = 0; i < $scope.layers.length; i++) {
-            if ($scope.layers[i].estado === true) {
-                var color = "[" + $scope.layers[i].color + "]"; // variable para almacenar el arreglo del color de la capa como un string
-                var conn = 'host=' + $scope.host + '%20port=' + $scope.port + '%20dbname=' + $scope.db + '%20user=' + $scope.user + '%20password=' + $scope.pass;
-                var fun = "Imgs/imagen.php?x=" + $scope.sizeX + "&y=" + $scope.sizeY + "&zi=" + $scope.zi +
-                        "&mx=" + $scope.mx + "&my=" + $scope.my + "&capa=" + $scope.layers[i].nombre + "&tipo=" + $scope.layers[i].tipo + "&rgb=" + color;
-                var url = fun + "&conn=" + conn;
-                $scope.layers[i].url = url;
+        if ($scope.imgEnable === true) {
+            for (i = 0; i < $scope.layers.length; i++) {
+                if ($scope.layers[i].estado === true) {
+                    var color = "[" + $scope.layers[i].color + "]"; // variable para almacenar el arreglo del color de la capa como un string
+                    var conn = 'host=' + $scope.host + '%20port=' + $scope.port + '%20dbname=' + $scope.db + '%20user=' + $scope.user + '%20password=' + $scope.pass;
+                    var fun = "Imgs/imagen.php?x=" + $scope.sizeX + "&y=" + $scope.sizeY + "&zi=" + $scope.zi +
+                            "&mx=" + $scope.mx + "&my=" + $scope.my + "&capa=" + $scope.layers[i].nombre + "&tipo=" + $scope.layers[i].tipo + "&rgb=" + color;
+                    var url = fun + "&conn=" + conn;
+                    $scope.layers[i].url = url;
 
-            } else {
-                if ($scope.layers[i].url !== "") {
-                    $scope.layers[i].actualizar = true; //variable necesaria para acutalizar en caso de 
-                    //realizar algunos cambios y que la capa no esté disponible
+                } else {
+                    if ($scope.layers[i].url !== "") {
+                        $scope.layers[i].actualizar = true; //variable necesaria para acutalizar en caso de 
+                        //realizar algunos cambios y que la capa no esté disponible
+                    }
                 }
             }
         }
@@ -472,17 +621,19 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
         } else {
             $scope.zi = 0;
         }
-        for (i = 0; i < $scope.layers.length; i++) {
-            if ($scope.layers[i].estado === true) {
-                var color = "[" + $scope.layers[i].color + "]"; // variable para almacenar el arreglo del color de la capa como un string
-                var conn = 'host=' + $scope.host + '%20port=' + $scope.port + '%20dbname=' + $scope.db + '%20user=' + $scope.user + '%20password=' + $scope.pass;
-                var fun = "Imgs/imagen.php?x=" + $scope.sizeX + "&y=" + $scope.sizeY + "&zi=" + $scope.zi +
-                        "&mx=" + $scope.mx + "&my=" + $scope.my + "&capa=" + $scope.layers[i].nombre + "&tipo=" + $scope.layers[i].tipo + "&rgb=" + color;
-                var url = fun + "&conn=" + conn;
-                $scope.layers[i].url = url;
-            } else {
-                if ($scope.layers[i].url !== "") {
-                    $scope.layers[i].actualizar = true;
+        if ($scope.imgEnable === true) {
+            for (i = 0; i < $scope.layers.length; i++) {
+                if ($scope.layers[i].estado === true) {
+                    var color = "[" + $scope.layers[i].color + "]"; // variable para almacenar el arreglo del color de la capa como un string
+                    var conn = 'host=' + $scope.host + '%20port=' + $scope.port + '%20dbname=' + $scope.db + '%20user=' + $scope.user + '%20password=' + $scope.pass;
+                    var fun = "Imgs/imagen.php?x=" + $scope.sizeX + "&y=" + $scope.sizeY + "&zi=" + $scope.zi +
+                            "&mx=" + $scope.mx + "&my=" + $scope.my + "&capa=" + $scope.layers[i].nombre + "&tipo=" + $scope.layers[i].tipo + "&rgb=" + color;
+                    var url = fun + "&conn=" + conn;
+                    $scope.layers[i].url = url;
+                } else {
+                    if ($scope.layers[i].url !== "") {
+                        $scope.layers[i].actualizar = true;
+                    }
                 }
             }
         }
@@ -492,23 +643,25 @@ myApp.controller('controller', function ($scope, Fullscreen, $http, myService) {
      * recibe la capa a enfocar
      */
     $scope.enfocar = function (layer) {
+
         var id = $scope.layers.indexOf(layer);
 
         var temp = $scope.layers[id];
         $scope.layers[id] = $scope.layers[$scope.layers.length - 1];
         $scope.layers[$scope.layers.length - 1] = temp;
         $scope.zi = -1;
-
-        for (i = 0; i < $scope.layers.length; i++) {
-            //si la capa actual tiene como estado visible, entonces actualizar
-            //el tamaño de la imagen de acuerdo a las dimesiones
-            if ($scope.layers[i].estado === true) {
-                var color = "[" + $scope.layers[i].color + "]"; // variable para almacenar el arreglo del color de la capa como un string
-                var conn = 'host=' + $scope.host + '%20port=' + $scope.port + '%20dbname=' + $scope.db + '%20user=' + $scope.user + '%20password=' + $scope.pass;
-                var fun = "Imgs/imagen.php?x=" + $scope.sizeX + "&y=" + $scope.sizeY + "&zi=" + $scope.zi +
-                        "&mx=" + $scope.mx + "&my=" + $scope.my + "&capa=" + $scope.layers[i].nombre + "&tipo=" + $scope.layers[i].tipo + "&rgb=" + color;
-                var url = fun + "&conn=" + conn;
-                $scope.layers[i].url = url;
+        if ($scope.imgEnable === true) {
+            for (i = 0; i < $scope.layers.length; i++) {
+                //si la capa actual tiene como estado visible, entonces actualizar
+                //el tamaño de la imagen de acuerdo a las dimesiones
+                if ($scope.layers[i].estado === true) {
+                    var color = "[" + $scope.layers[i].color + "]"; // variable para almacenar el arreglo del color de la capa como un string
+                    var conn = 'host=' + $scope.host + '%20port=' + $scope.port + '%20dbname=' + $scope.db + '%20user=' + $scope.user + '%20password=' + $scope.pass;
+                    var fun = "Imgs/imagen.php?x=" + $scope.sizeX + "&y=" + $scope.sizeY + "&zi=" + $scope.zi +
+                            "&mx=" + $scope.mx + "&my=" + $scope.my + "&capa=" + $scope.layers[i].nombre + "&tipo=" + $scope.layers[i].tipo + "&rgb=" + color;
+                    var url = fun + "&conn=" + conn;
+                    $scope.layers[i].url = url;
+                }
             }
         }
     };
